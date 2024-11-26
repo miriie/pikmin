@@ -1,0 +1,53 @@
+
+*{
+  font-family: 'Cascadia Code';
+}
+#top-division {
+  width: 100%;
+  height: 80px; 
+  background-color: yellow;
+  color: navy; 
+  text-align: center;
+  line-height: 80px; 
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  z-index: 1000; 
+}
+
+body {
+  margin: 10px;
+  padding-top: 100px; /* Adds space equal to the height of #top-division */
+  background-image: url(images/Screenshot\ 2024-11-26\ 150429.png); /* Path to the image */
+  background-size: cover; /* Make the image cover the entire area */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-attachment: fixed; /* Fix the background while scrolling */
+
+}
+
+/* Creating an image grid class */
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: left;
+  margin: 20px 0;
+}
+
+/* Individual rectangle properties */
+.image-grid a {
+  display: block;
+  width: 400px;
+  height: 260px;
+  background-color: aquamarine;
+  overflow: hidden;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.image-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
