@@ -3,6 +3,10 @@
   font-family: 'Cascadia Code';
 }
 #top-division {
+  display: flex; 
+  align-items: center; 
+  padding-left: 10px; 
+  height: 80px; 
   width: 100%;
   height: 80px; 
   background-color: yellow;
@@ -15,14 +19,24 @@
   z-index: 1000; 
 }
 
+/* Styling the image */
+.corner-image {
+  margin: 5px;
+  top: 0;
+  left: 0;
+  width: 150px; 
+  height: 50px; 
+  object-fit: cover;
+}
+
 body {
   margin: 10px;
-  padding-top: 100px; /* Adds space equal to the height of #top-division */
-  background-image: url(images/Screenshot\ 2024-11-26\ 150429.png); /* Path to the image */
-  background-size: cover; /* Make the image cover the entire area */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevent the image from repeating */
-  background-attachment: fixed; /* Fix the background while scrolling */
+  padding-top: 100px; 
+  background-image: url(images/background.png); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
 
 }
 
@@ -51,3 +65,5 @@ body {
   height: 100%;
   object-fit: cover;
 }
+
+
