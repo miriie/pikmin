@@ -3,31 +3,29 @@
   font-family: 'Cascadia Code';
 }
 #top-division {
-  display: flex; 
-  align-items: center; 
-  padding-left: 10px; 
-  height: 80px; 
+  display: flex;
+  align-items: center;        /* Vertically center the content */
+  justify-content: flex-start; /* Align items to the left */
+  padding-left: 10px;          /* Space from the left edge */
+  height: 80px;
   width: 100%;
-  height: 80px; 
   background-color: yellow;
-  color: navy; 
-  text-align: center;
-  line-height: 80px; 
+  color: navy;
+  text-align: left;            /* Align text to the left */
   position: fixed;
-  top: 0; 
-  left: 0; 
-  z-index: 1000; 
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 /* Styling the image */
 .corner-image {
-  margin: 5px;
-  top: 0;
-  left: 0;
-  width: 150px; 
-  height: 50px; 
+  margin-right: 10px;  /* Space between the logo and the text */
+  width: 150px;
+  height: 50px;
   object-fit: cover;
 }
+
 
 body {
   margin: 10px;
