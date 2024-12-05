@@ -23,11 +23,11 @@ def game_page(game_name):
             "rating": game[2],
             "image": game[3]
         }
-        return render_template('game-page.html', game=game_data)
+        return render_template('gamepage.html', game=game_data)
     else:
         return "Game not found", 404
 
 
-@app.route('/add_review', methods=['POST'])
-def add_review():
-    data =request.json
+# @app.route('/add_review', methods=['POST'])
+# def add_review():
+#     data =request.json
