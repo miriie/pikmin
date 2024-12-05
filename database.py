@@ -11,6 +11,24 @@ email TEXT UNIQUE NOT NULL,
 password TEXT NOT NULL
 );'''
 
+create_table_reviews = '''
+CREATE TABLE IF NOT EXISTS reviews (
+id INTERGER PRIMARY KEY AUTOINCREMENT
+game TEXT UNIQUE NOT NULL
+rating INTERGER NOT NULL
+review TEXT
+);'''
+
+create_table_games = '''
+CREATE TABLE IF NOT EXISTS games (
+id INTERGER
+name TEXT
+title TEXT
+description TEXT
+rating INTERGER
+image TEXT
+);'''
+
 cursor.execute(create_table_users)
 connection.commit
 connection.close()
