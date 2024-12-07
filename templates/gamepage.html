@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game['title'] }}</title>
+    <!-- Reference to the static CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+    <div class="game-page">
+        <h1>{{ game['title'] }}</h1>
+        <!-- Reference to the static image -->
+        <img src="{{ url_for('static', filename='images/' + game['image']) }}" alt="{{ game['title'] }}">
+        <p>{{ game['description'] }}</p>
+        <p><strong>Rating:</strong> {{ game['rating'] }}</p>
+        
+        <div class="reviews">
+            <h2>Reviews:</h2>
+            {% for review in game['reviews'] %}
+                <div class="review">
+                    <p><strong>{{ review['username'] }}</strong></p>
+                    <p>{{ review['review'] }}</p>
+                    <p><strong>Rating:</strong> {{ review['rating'] }}</p>
+                </div>
+            {% else %}
+                <p>No reviews available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
