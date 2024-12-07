@@ -15,20 +15,26 @@
       <div class="content-wrapper">
         <div class="game-preview">
             <div class="game-image">
-                <img src="images/pikmin4_main_image.jpg" alt="Game Preview">
+                <img src="{{ game['image'] }}" alt="Game Preview">
             </div>
         </div>
         <div class="game-info">
-            <h2>Pikmin 4</h2>
-            <div class="info-box" style="background-color: #239ce3;">Pikmin 4 is the newest game in the hit franchise. We hate Nintendo</div>
-        </div>
-        <div class="additional-details">
-            <div class="circle">
-                <img src="images/clover.png" alt="Example">
+            <h2>{{ game['titles'] }}</h2>
+            <div class="info-box" style="background-color: #239ce3;">
+              <p>{{ game['description'] }}</p>
+              <p class="rating">Rating: {{game.rating }}</p>
             </div>
-            <div class="info-text">
-                Pikmin is the best
+          </div>
+        <div class="reviews">
+          <h3>Reviews:</h3>
+          {% for review in game.reviews %}
+            <div class="review">
+              <p>Rating: {{ review[0] }}</p>
+              <p>{{ review[1] }}</p>
             </div>
+          {% else %}
+            <p>NO reviews available</p>
+          {% endfor %}
         </div>
     </div>
   </body>

@@ -11,17 +11,26 @@ def game_page(game_name):
     connection = sqlite3.connect('database.py')
     cursor = connection.cursor()
 
+    #fetching game information
     query = "SELECT title, description, rating, image FROM games WHERE name = ?"
     cursor.execute(query, (game_name,))
     game = cursor.fetchone()
+
+    # fetching reviews from the reviews table (in the same file tho)
+    query_reviews = "SELECT username, review_text, rating FROM revoews WHERE game_name = ?"
+    cursor.execute(query_reviews, (game_name,))
+    reviews = cursor.fetchall
+
     connection.close()
+
 
     if game:
         game_data = {
             "titles":game[0],
             "description": game[1],
             "rating": game[2],
-            "image": game[3]
+            "image": game[3],
+            "reviews": [{"username": r[0], "text": r[1], "rating": r[2]} for r in reviews]
         }
         return render_template('gamepage.html', game=game_data)
     else:
