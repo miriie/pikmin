@@ -1,32 +1,7 @@
-
-*{
+/* General Styles */
+* {
   font-family: 'Cascadia Code';
 }
-#top-division {
-  display: flex;
-  align-items: center;        /* Vertically center the content */
-  justify-content: flex-start; /* Align items to the left */
-  padding-left: 10px;          /* Space from the left edge */
-  height: 80px;
-  width: 100%;
-  background-color: yellow;
-  color: navy;
-  text-align: left;            /* Align text to the left */
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-}
-
-/* Styling the image */
-.corner-image {
-  margin-right: 10px;  /* Space between the logo and the text */
-  width: 150px;
-  height: 50px;
-  object-fit: cover;
-}
-
-
 body {
   margin: 10px;
   padding-top: 100px; 
@@ -35,59 +10,39 @@ body {
   background-position: center; 
   background-repeat: no-repeat;
   background-attachment: fixed; 
-
 }
 
-/* Creating an image grid class */
-.image-grid {
+/* Top Navigation Bar */
+#top-division {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: left;
-  margin: 20px 0;
-}
-
-/* Individual rectangle properties */
-.image-grid a {
-  display: block;
-  width: 400px;
-  height: 260px;
-  background-color: aquamarine;
-  overflow: hidden;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.image-grid img {
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  height: 80px;
   width: 100%;
-  height: 100%;
+  background-color: yellow;
+  color: navy;
+  text-align: left;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+.corner-image {
+  margin-right: 10px;
+  width: 150px;
+  height: 50px;
   object-fit: cover;
 }
 
-
+/* Content Wrapper */
 .content-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  padding: 20px;
   gap: 20px;
-}
-
-/* Game Preview Section */
-.game-preview {
-  position: relative;
-  width: 60%;
-  background-color: #d4f5b2;
-  border-radius: 10px;
   padding: 20px;
 }
 
-.game-image img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-}
-
-
+/* Left Section: Game Info */
 .game-info {
   width: 30%;
   background-color: #fdfd96;
@@ -96,25 +51,77 @@ body {
   text-align: left;
 }
 
-.game-info h2 {
-  text-align: center;
+.game-info h1 {
+  margin-bottom: 10px;
 }
-
-.info-box {
-  margin: 10px 0;
-  padding: 20px;
-  color: white;
-  text-align: center;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.info-box p {
-  margin: 10px 0;
+.game-info p {
+  margin-bottom: 10px;
 }
 
 .rating {
   font-size: 1.2em;
-  font-weight: normal;
+  font-weight: bold;
   color: #ffcc00;
+}
+
+/* Right Section: Game Image */
+.game-image {
+  width: 60%;
+}
+.game-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Reviews Section */
+.reviews-section {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.reviews-section h2 {
+  margin-bottom: 20px;
+}
+
+/* Individual Review Container */
+.review {
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile Section */
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.review-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-header p {
+  margin: 0;
+}
+
+/* Review Text */
+.review-text {
+  margin: 10px 0 0;
+  font-size: 1em;
+  color: #333;
 }

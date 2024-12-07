@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="stylesheet.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
   </head>
   <body>
     <div id="top-division">
-      <a href="homepage.html">
+      <a href="{{ url_for('homepage') }}">
         <img src="images/logo.png" alt="Logo" class="corner-image">
       </a>
       Minpik Game Review
@@ -16,16 +16,20 @@
     <br>
     <h1 id="popular_games_section">Popular Games</h1>
     <div class="image-grid">
-      <a href="gamepage.html"><img src="images/pikmin4_main_image.jpg" alt="Pikmin 4"></a>
-      <a href="gamepage.html"><img src="images/mario_party_main.jpg" alt="Mario Party Superstars"></a>
-      <a href="gamepage.html"><img src="images/Tears-of-the-Kingdom.jpg" alt="The Legend of Zelda: Tears of the Kingdom"></a>
+      {% for game in popular_games %}
+        <a href="/game/{{ game['id'] }}">
+          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}">
+        </a>
+      {% endfor %}
     </div>
     <br>
-    <h1 id="recommended_games_section">Recommended Games</h1>
+    <h1 id="recommended_games_section">Explore Games</h1>
     <div class="image-grid">
-      <a href="gamepage.html"><img src="" alt=""></a>
-      <a href="gamepage.html"><img src="" alt=""></a>
-      <a href="gamepage.html"><img src="" alt=""></a>
+      {% for game in explore_games %}
+        <a href="/game/{{ game['id'] }}">
+          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}">
+        </a>
+      {% endfor %}
     </div>
   </body>
 </html>
