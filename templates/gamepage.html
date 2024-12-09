@@ -36,7 +36,7 @@
         {% for review in game['reviews'] %}
             <div class="review">
                 <div class="profile">
-                    <img src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Profile Picture" class="profile-pic">
+                    <img src="{{ url_for('static', filename=review['profile_picture'] if review['profile_picture'] else 'images/default_profile.png') }}" alt="Profile Picture" class="profile-pic">
                     <div class="review-header">
                         <p><strong>{{ review['username'] }}</strong></p>
                         <p><strong>Rating:</strong> {{ review['rating'] }}</p>

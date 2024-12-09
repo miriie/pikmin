@@ -18,8 +18,13 @@ def game_page(game_name):
     game = connection.execute(query, (game_name,)).fetchone()
 
     # Fetching reviews from the reviews table
-    query_reviews = "SELECT username, review, rating FROM reviews WHERE game = ?"
-    reviews = connection.execute(query_reviews, (game_name,)).fetchall()
+    query_reviews = '''
+    SELECT users.username, users.profile_picture, reviews.review, reviews.rating
+    FROM reviews
+    JOIN users ON reviews.user_id = users.id
+    WHERE reviews.game = ?
+    '''
+    reviews= connection.execute(query_reviews, (game_name,)).fetchall()
 
     connection.close()
 
@@ -28,9 +33,8 @@ def game_page(game_name):
             "title": game['title'],
             "description": game['description'],
             "rating": game['rating'],
-            "image": game['image'],  # The image filename (relative path)
-            "reviews": [{"username": r['username'], "review": r['review'], "rating": r['rating']} for r in reviews]
-        }
+            "image": game['image'],  
+            "reviews": [{"username": r['username'], "profile_picture": r['profile_picture'], "review": r['review'], "rating": r['rating']} for r in reviews]        }
         return render_template('gamepage.html', game=game_data)
     else:
         return "Page not found", 404
@@ -46,7 +50,7 @@ def homepage():
     LEFT JOIN reviews ON reviews.game = games.title
     GROUP BY games.id
     ORDER BY review_count DESC
-    LIMIT 3;  # Fetch top 3 games with the most reviews
+    LIMIT 3;
     '''
     popular_games = connection.execute(popular_games_query).fetchall()
 

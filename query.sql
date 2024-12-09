@@ -1,2 +1,1 @@
-SELECT * FROM games;
-SELECT * FROM reviews;
+PRAGMA table_info(reviews);

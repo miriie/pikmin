@@ -1,35 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-  </head>
-  <body>
-    <div id="top-division">
-      <a href="{{ url_for('homepage') }}">
-        <img src="images/logo.png" alt="Logo" class="corner-image">
-      </a>
-      Minpik Game Review
-    </div>
-    <br>
-    <h1 id="popular_games_section">Popular Games</h1>
-    <div class="image-grid">
-      {% for game in popular_games %}
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div id="top-division">
+    <a href="{{ url_for('homepage') }}">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
+    </a>
+    Minpik Game Review
+  </div>
+  <br>
+
+  <h1 id="popular_games_section">Popular Games</h1>
+  <div class="game-grid">
+    {% for game in popular_games %}
+      <div class="game-card">
         <a href="/game/{{ game['id'] }}">
-          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}">
+          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}" class="game-image-homepage">
+          <div class="game-title">{{ game['title'] }}</div>
         </a>
-      {% endfor %}
-    </div>
-    <br>
-    <h1 id="recommended_games_section">Explore Games</h1>
-    <div class="image-grid">
-      {% for game in explore_games %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <h1 id="explore_games_section">Explore Games</h1>
+  <div class="game-grid">
+    {% for game in explore_games %}
+      <div class="game-card">
         <a href="/game/{{ game['id'] }}">
-          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}">
+          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}" class="game-image-homepage">
+          <div class="game-title">{{ game['title'] }}</div>
         </a>
-      {% endfor %}
-    </div>
-  </body>
+      </div>
+    {% endfor %}
+  </div>
+</body>
 </html>
