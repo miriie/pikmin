@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 connection = sqlite3.connect('my-database.db')
 cursor = connection.cursor()
@@ -25,10 +26,13 @@ def initialize_database():
     create_table_reviews = '''
     CREATE TABLE IF NOT EXISTS reviews (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    game TEXT NOT NULL,
+    game_id INTEGER NOT NULL,
     rating INTEGER NOT NULL,
     review TEXT,
-    user_id INTEGER NOT NULL, -- Reference to the users table
+    title TEXT,
+    date TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );'''
 
@@ -114,36 +118,44 @@ def add_dummy_users():
     connection.close()
 
 def add_dummy_reviews():
-    connection = sqlite3.connect('my-database.db')
+    connection = get_db_connection()
     cursor = connection.cursor()
 
     reviews_data = [
-        # (game, rating, review, username)
-        ('Pikmin 4',5, 'best game in existence.', 'user1234'),
-        ('Pikmin 4', 5, 'minpik', 'zara fendy'),
-        ("Pikmin 4", 5, "Amazing gameplay and beautiful graphics!", "user1"),
-        ("The Legend of Zelda: Tears of the Kingdom", 4, "Great game, but a little difficult at times.", "user2"),
-        ("Mario Party Superstars", 3, "Fun but repetitive after a while.", "user3"),
-        ("Animal Crossing: New Horizons", 4, "Relaxing and fun, perfect for unwinding.", "user1"),
-        ("Pokémon Violet", 2, "Boring gameplay and too many bugs.", "user4")
+        ('Pikmin 4', 5, 'Best game ever!', 'Epic Adventure', '2024-12-01', 'user1234'),
+        ('Pikmin 4', 5, 'Simply amazing!', 'Masterpiece', '2024-12-02', 'zara fendy'),
+        ("The Legend of Zelda: Tears of the Kingdom", 4, "Fantastic sequel!", "Challenging Fun", '2024-12-03', "user1"),
+        ("Mario Party Superstars", 3, "Enjoyable with friends.", "Fun but Repetitive", '2024-12-03', "user2")
     ]
 
     for review in reviews_data:
-        # Fetch the user_id based on the username
-        cursor.execute("SELECT id FROM users WHERE username = ?", (review[3],))
-        user_id = cursor.fetchone()
-        
-        if user_id:
-            user_id = user_id[0]
-            cursor.execute("INSERT INTO reviews (game, rating, review, user_id) VALUES (?, ?, ?, ?)", 
-                           (review[0], review[1], review[2], user_id))
-            print(f"Review for '{review[0]}' added by {review[3]}.")
+        # Fetch game_id for the given game title
+        cursor.execute("SELECT id FROM games WHERE title = ?", (review[0],))
+        game_id_row = cursor.fetchone()
+
+        # Fetch user_id for the given username
+        cursor.execute("SELECT id FROM users WHERE username = ?", (review[5],))
+        user_id_row = cursor.fetchone()
+
+        if game_id_row and user_id_row:
+            game_id = game_id_row[0]
+            user_id = user_id_row[0]
+
+            # Insert the review
+            cursor.execute(
+                "INSERT INTO reviews (game_id, rating, review, title, date, user_id) VALUES (?, ?, ?, ?, ?, ?)",
+                (game_id, review[1], review[2], review[3], review[4], user_id)
+            )
+            print(f"Review for '{review[0]}' added by {review[5]}.")
         else:
-            print(f"User '{review[3]}' not found. Skipping review.")
+            if not game_id_row:
+                print(f"Game '{review[0]}' not found in the database. Skipping.")
+            if not user_id_row:
+                print(f"User '{review[5]}' not found in the database. Skipping.")
 
     connection.commit()
     connection.close()
-    print("New reviews have been added (if they weren't duplicates).")
+
 
 if __name__ == "__main__":
     add_game_entries()

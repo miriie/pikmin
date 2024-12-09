@@ -9,7 +9,7 @@
 <body>
     <!-- Top Navigation Bar -->
     <div id="top-division">
-        <a href="homepage.html">
+        <a href="{{ url_for('homepage') }}">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
         </a>
         Minpik Game Review
@@ -40,13 +40,15 @@
                     <div class="review-header">
                         <p><strong>{{ review['username'] }}</strong></p>
                         <p><strong>Rating:</strong> {{ review['rating'] }}</p>
+                        <p><strong>Date:</strong> {{ review['date'] }}</p>
                     </div>
                 </div>
+                <h3 class="review-title">{{ review['review_title'] }}</h3>
                 <p class="review-text">{{ review['review'] }}</p>
             </div>
         {% else %}
             <p>No reviews available.</p>
         {% endfor %}
-    </div>
+    </div>    
 </body>
 </html>

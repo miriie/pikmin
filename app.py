@@ -9,22 +9,23 @@ def get_db_connection():
     connection.row_factory = sqlite3.Row  # Use Row to get dictionary-like access
     return connection
 
-@app.route('/game/<game_name>')
-def game_page(game_name):
+@app.route('/game/<int:game_id>')
+def game_page(game_id):
     connection = get_db_connection()
 
-    # Fetching game information from the database
-    query = "SELECT title, description, rating, image FROM games WHERE title = ?"
-    game = connection.execute(query, (game_name,)).fetchone()
+    # Fetch game information based on the game ID
+    query_game = "SELECT title, description, rating, image FROM games WHERE id = ?"
+    game = connection.execute(query_game, (game_id,)).fetchone()
 
-    # Fetching reviews from the reviews table
+    # Fetch reviews for the game
     query_reviews = '''
-    SELECT users.username, users.profile_picture, reviews.review, reviews.rating
+    SELECT users.username, users.profile_picture, reviews.title AS review_title, 
+           reviews.review, reviews.rating, reviews.date
     FROM reviews
     JOIN users ON reviews.user_id = users.id
-    WHERE reviews.game = ?
+    WHERE reviews.game_id = ?
     '''
-    reviews= connection.execute(query_reviews, (game_name,)).fetchall()
+    reviews = connection.execute(query_reviews, (game_id,)).fetchall()
 
     connection.close()
 
@@ -34,20 +35,30 @@ def game_page(game_name):
             "description": game['description'],
             "rating": game['rating'],
             "image": game['image'],  
-            "reviews": [{"username": r['username'], "profile_picture": r['profile_picture'], "review": r['review'], "rating": r['rating']} for r in reviews]        }
+            "reviews": [
+                {
+                    "username": r['username'],
+                    "profile_picture": r['profile_picture'],
+                    "review_title": r['review_title'],
+                    "review": r['review'],
+                    "rating": r['rating'],
+                    "date": r['date']
+                } for r in reviews
+            ]
+        }
         return render_template('gamepage.html', game=game_data)
     else:
         return "Page not found", 404
+
 
 @app.route('/')
 def homepage():
     connection = get_db_connection()
 
-    # Fetch popular games based on the number of reviews
     popular_games_query = '''
     SELECT games.*, COUNT(reviews.id) AS review_count
     FROM games
-    LEFT JOIN reviews ON reviews.game = games.title
+    LEFT JOIN reviews ON reviews.game_id = games.id  -- Correct the join condition here
     GROUP BY games.id
     ORDER BY review_count DESC
     LIMIT 3;

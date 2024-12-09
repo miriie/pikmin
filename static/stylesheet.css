@@ -97,37 +97,42 @@ body {
   gap: 10px; /* Add spacing between review elements */
 }
 
-  /* Profile Section */
-  .profile {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
+/* Profile Section */
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+/* Review Header */
+.review-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-header p {
+  margin: 0;
+}
   
-  .profile-pic {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-  }
-  
-  /* Review Header */
-  .review-header {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .review-header p {
-    margin: 0;
-  }
-  
+.review-title {
+  margin-left: 10px;
+}
+
   /* Review Text */
-  .review-text {
-    margin-top: 10px;
-    font-size: 1em;
-    color: #333;
-  }
+.review-text {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 1em;
+  color: #333;
+}
 
 /* Top Navigation Bar */
 #top-division {
