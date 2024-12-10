@@ -22,10 +22,11 @@ def game_page(game_id):
 
     if request.method == 'POST':
         # Handle the form submission for adding a review
-        username = request.form['username']
+        username = session['username']
         rating = int(request.form['rating'])
         review_title = request.form['review_title']
         review_text = request.form['review']
+        profile_picture = 'images/clover.png'
         
         # Get the current time in Sydney, Australia
         sydney_tz = pytz.timezone('Australia/Sydney')
@@ -33,10 +34,10 @@ def game_page(game_id):
 
         # Insert the new review into the database
         insert_review_query = '''
-        INSERT INTO reviews (game_id, rating, review, title, date, username)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
-        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, username))
+        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
     
     # Fetch game information based on the game ID
