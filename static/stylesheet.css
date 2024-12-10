@@ -188,3 +188,84 @@ body {
   font-weight: bold;
   color: navy;
 }
+
+/* Review Form */
+.review-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px; /* Spacing from other elements */
+}
+
+.review-form h2 {
+  font-size: 1.5em;
+  color: navy;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label {
+  font-weight: bold;
+  color: #333;
+}
+
+input, textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  height: 100px; /* Default height */
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  background-color: navy;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Auth Button */
+.auth-button {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.auth-button a {
+  text-decoration: none;
+  color: navy;
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.auth-button a:hover {
+  background-color: navy;
+  color: white;
+}

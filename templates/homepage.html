@@ -8,11 +8,19 @@
 <body>
   <div id="top-division">
     <a href="{{ url_for('homepage') }}">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
     </a>
-    Minpik Game Review
+    <span>Minpik Game Review</span>
+    
+    <!-- Login/Logout Button -->
+    <div class="auth-button">
+        {% if not session.get('logged_in') %}
+            <a href="{{ url_for('login') }}" class="login-button">Login</a>
+        {% else %}
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        {% endif %}
+    </div>
   </div>
-  <br>
 
   <h1 id="popular_games_section">Popular Games</h1>
   <div class="game-grid">

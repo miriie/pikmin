@@ -1,18 +1,49 @@
-from flask import Flask, render_template
-import sqlite3
 import random
+from flask import Flask, render_template, redirect, url_for, session, request
+from datetime import datetime
+import pytz
+import sqlite3
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 def get_db_connection():
     connection = sqlite3.connect('my-database.db')
     connection.row_factory = sqlite3.Row  # Use Row to get dictionary-like access
     return connection
 
-@app.route('/game/<int:game_id>')
+@app.route('/game/<int:game_id>', methods=['GET', 'POST'])
 def game_page(game_id):
     connection = get_db_connection()
 
+    if request.method == 'POST':
+        # Handle the form submission for adding a review
+        username = request.form['username']
+        rating = int(request.form['rating'])
+        review_title = request.form['review_title']
+        review_text = request.form['review']
+        
+        # Get the current time in Sydney, Australia
+        sydney_tz = pytz.timezone('Australia/Sydney')
+        current_date = datetime.now(sydney_tz).strftime('%Y-%m-%d')
+
+        # Fetch user ID based on username
+        user_query = "SELECT id FROM users WHERE username = ?"
+        user_id_row = connection.execute(user_query, (username,)).fetchone()
+
+        if not user_id_row:
+            return "User not found. Review not submitted.", 400
+        
+        user_id = user_id_row['id']
+
+        # Insert the new review into the database
+        insert_review_query = '''
+        INSERT INTO reviews (game_id, rating, review, title, date, user_id)
+        VALUES (?, ?, ?, ?, ?, ?)
+        '''
+        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, user_id))
+        connection.commit()
+    
     # Fetch game information based on the game ID
     query_game = "SELECT title, description, rating, image FROM games WHERE id = ?"
     game = connection.execute(query_game, (game_id,)).fetchone()
@@ -72,6 +103,17 @@ def homepage():
     connection.close()
 
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Logic for login
+    session['logged_in'] = True
+    return redirect(url_for('homepage'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('homepage'))
 
 if __name__ == "__main__":
     app.run(debug=True)
