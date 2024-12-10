@@ -5,6 +5,13 @@
     </head>
     
     <body>
+        <div id="top-division">
+            <a href="{{ url_for('homepage') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
+            </a>
+            <span>Minpik Game Review</span>
+        </div>
+
         <h1> Register </h1>
         <form id="register" method="POST" action="/register">
             <div class= "wrapper">
@@ -16,7 +23,9 @@
                     <h3> Reconfirm Password </h3>
                     <input type="text" id="re-password" name="re-password" required>
                 </div>
+
                 <br>
+                
                 <button type="submit" id="register-button" class="button">Register</button>
                 <h3>
                     Already have an account? <a href="{{ url_for('login_form') }}">Log in</a>

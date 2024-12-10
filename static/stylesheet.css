@@ -1,3 +1,5 @@
+/* trang css */
+
 /* General Styles */
 * {
   font-family: 'Cascadia Code';
@@ -269,9 +271,8 @@ textarea {
   background-color: navy;
   color: white;
 }
-*{
-  font-family: "Cascadia Code";
-}
+
+/* fendy css */
 
 h1 {
   text-align: center;
