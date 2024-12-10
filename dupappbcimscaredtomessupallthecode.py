@@ -31,21 +31,12 @@ def game_page(game_id):
         sydney_tz = pytz.timezone('Australia/Sydney')
         current_date = datetime.now(sydney_tz).strftime('%Y-%m-%d')
 
-        # Fetch user ID based on username
-        user_query = "SELECT id FROM users WHERE username = ?"
-        user_id_row = connection.execute(user_query, (username,)).fetchone()
-
-        if not user_id_row:
-            return "User not found. Review not submitted.", 400
-        
-        user_id = user_id_row['id']
-
         # Insert the new review into the database
         insert_review_query = '''
-        INSERT INTO reviews (game_id, rating, review, title, date, user_id)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO reviews (game_id, rating, review, title, date, username)
+        VALUES (?, ?, ?, ?, ?)
         '''
-        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, user_id))
+        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, username))
         connection.commit()
     
     # Fetch game information based on the game ID
@@ -54,11 +45,10 @@ def game_page(game_id):
 
     # Fetch reviews for the game
     query_reviews = '''
-    SELECT users.username, users.profile_picture, reviews.title AS review_title, 
-           reviews.review, reviews.rating, reviews.date
+    SELECT username, profile_picture, title AS review_title, 
+           review, rating, date
     FROM reviews
-    JOIN users ON reviews.user_id = users.id
-    WHERE reviews.game_id = ?
+    WHERE game_id = ?
     '''
     reviews = connection.execute(query_reviews, (game_id,)).fetchall()
 
@@ -114,76 +104,71 @@ def homepage():
 # end trang stuff
 #
 
-
-
 #
 # fendy stuff
 #
 
-@app.route("/login")
-def login_form():
-    return render_template("login.html")
-
-@app.route("/login", methods= ["POST"])
+@app.route("/login", methods= ["GET", "POST"])
 def login():
     connection = get_db_connection()
-    username = request.form["username"]
-    password = request.form["password"]
-
-    cursor = connection.cursor()
-    cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
-    existing_user = cursor.fetchone()
     
-    if existing_user:
-        db_password = existing_user[1]
-        if password == db_password:
-            session["username"] = username
-            session["logged_in"] = True
-            return redirect(url_for('homepage'))
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            db_password = existing_user[1]
+            if password == db_password:
+                session["username"] = username
+                session["logged_in"] = True
+                return redirect(url_for('homepage'))
+            else:
+                return render_template("login.html", message="Error: Wrong username or password")
         else:
-            return render_template("login.html", message="Error: Wrong username or password")
-    else:
-        return render_template("login.html", message= "Error: User does not exist")
+            return render_template("login.html", message= "Error: User does not exist")
+    return render_template("login.html")
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('homepage'))
 
-
-@app.route("/register")
-def registration_form():
-    return render_template("register.html")
-
-@app.route("/register", methods= ["POST"])
+@app.route("/register", methods= ["GET", "POST"])
 def register():
     connection = get_db_connection()
-    username = request.form["username"]
-    password = request.form["password"]
-    re_password = request.form["re-password"]
-
-    cursor = connection.cursor()
-    cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
-    existing_user = cursor.fetchone()
     
-    # user taken
-    if existing_user:
-        return render_template("register.html", message= "Error: Username already taken")
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        re_password = request.form["re-password"]
 
-    # password min length
-    if len(password) <= 8:
-        return render_template("register.html", message= "Error: Password must be at least 8 characters long")
+        cursor = connection.cursor()
+        cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+        
+        # user taken
+        if existing_user:
+            return render_template("register.html", message= "Error: Username already taken")
 
-    # passwords match
-    if password != re_password:
-        return render_template("register.html", message= "Error: Passwords do not match")
-    
-    # successful registration 
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO users(username, password) VALUES (?, ?)", (username, password))
-    connection.commit()
+        # password min length
+        if len(password) <= 8:
+            return render_template("register.html", message= "Error: Password must be at least 8 characters long")
 
-    return render_template("register.html", message= "Registration successful")
+        # passwords match
+        if password != re_password:
+            return render_template("register.html", message= "Error: Passwords do not match")
+        
+        # successful registration 
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO users(username, password) VALUES (?, ?)", (username, password))
+        connection.commit()
+
+        return render_template("register.html", message= "Registration successful")
+    return render_template("register.html")
 
 #
 # end fendy's stuff

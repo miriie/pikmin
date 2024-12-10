@@ -129,71 +129,67 @@ def init_db():
         """)    
         connection.commit()
 
-@app.route("/register")
-def registration_form():
-    return render_template("register.html")
-
-@app.route("/register", methods= ["POST"])
-def register():
-    username = request.form["username"]
-    password = request.form["password"]
-    re_password = request.form["re-password"]
-
-    with sqlite3.connect("users.db") as connection:
-        cursor = connection.cursor()
-        cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
-        existing_user = cursor.fetchone()
-    
-    # user taken
-    if existing_user:
-        return render_template("register.html", message= "Error: Username already taken")
-
-    # password min length
-    if len(password) <= 8:
-        return render_template("register.html", message= "Error: Password must be at least 8 characters long")
-
-    # passwords match
-    if password != re_password:
-        return render_template("register.html", message= "Error: Passwords do not match")
-    
-    # successful registration 
-    with sqlite3.connect("users.db") as connection:
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO users(username, password) VALUES (?, ?)", 
-                       (username, password))
-        connection.commit()
-
-    return render_template("register.html", message= "Registration successful")
-
-@app.route("/login")
-def login_form():
-    return render_template("login.html")
-
-@app.route("/login", methods= ["POST"])
+@app.route("/login", methods= ["GET", "POST"])
 def login():
-    username = request.form["username"]
-    password = request.form["password"]
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
 
-    with sqlite3.connect("users.db") as connection:
-        cursor = connection.cursor()
-        cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
-        existing_user = cursor.fetchone()
-    
-    if existing_user:
-        db_password = existing_user[1]
-        if password == db_password:
-            session["username"] = username
-            session["logged_in"] = True
-            return redirect(url_for('homepage'))
+        with sqlite3.connect("users.db") as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
+            existing_user = cursor.fetchone()
+        
+        if existing_user:
+            db_password = existing_user[1]
+            if password == db_password:
+                session["username"] = username
+                session["logged_in"] = True
+                return redirect(url_for('homepage'))
+            else:
+                return render_template("login.html", message="Error: Wrong username or password")
         else:
-            return render_template("login.html", message="Error: Wrong username or password")
-    else:
-        return render_template("login.html", message= "Error: User does not exist")
+            return render_template("login.html", message= "Error: User does not exist")
+    return render_template("login.html")
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('homepage'))
+
+@app.route("/register", methods= ["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        re_password = request.form["re-password"]
+
+        with sqlite3.connect("users.db") as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
+            existing_user = cursor.fetchone()
+        
+        # user taken
+        if existing_user:
+            return render_template("register.html", message= "Error: Username already taken")
+
+        # password min length
+        if len(password) <= 8:
+            return render_template("register.html", message= "Error: Password must be at least 8 characters long")
+
+        # passwords match
+        if password != re_password:
+            return render_template("register.html", message= "Error: Passwords do not match")
+        
+        # successful registration 
+        with sqlite3.connect("users.db") as connection:
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO users(username, password) VALUES (?, ?)", 
+                        (username, password))
+            connection.commit()
+
+        return render_template("register.html", message= "Registration successful")
+    return render_template("register.html")
 
 #
 # end fendy's stuff

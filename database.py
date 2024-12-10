@@ -13,15 +13,14 @@ def get_db_connection():
 
 
 def initialize_database():
-
+    
     create_table_users = '''
     CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    profile_picture TEXT
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        profile_picture TEXT
     );'''
+
 
     create_table_reviews = '''
     CREATE TABLE IF NOT EXISTS reviews (
@@ -31,9 +30,8 @@ def initialize_database():
     review TEXT,
     title TEXT,
     date TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    username TEXT NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
     );'''
 
     create_table_games = '''
@@ -94,20 +92,20 @@ def add_dummy_users():
     cursor = connection.cursor()
 
     users_data = [
-        ("user1234", "user1234@example.com", "password123", "images/clover.png"),
-        ("zara fendy", "zara@example.com", "securepass", "images/clover.png"),
-        ("user1", "user1@example.com", "mypassword", "images/clover.png"),
-        ("user2", "user2@example.com", "letmein", "images/clover.png"),
-        ("user3", "user3@example.com", "hunter2", "images/clover.png"),
-        ("user4", "user4@example.com", "password4", "images/clover.png")
+        ("user1234", "password123", "images/clover.png"),
+        ("zara fendy", "securepass", "images/clover.png"),
+        ("user1", "mypassword", "images/clover.png"),
+        ("user2", "letmein", "images/clover.png"),
+        ("user3", "hunter2", "images/clover.png"),
+        ("user4", "password4", "images/clover.png")
     ]
 
     # Insert users only if they don't already exist
     for user in users_data:
-        cursor.execute("SELECT COUNT(*) FROM users WHERE email = ?", (user[1],))
+        cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?", (user[0],))
         if cursor.fetchone()[0] == 0:
             cursor.execute(
-                "INSERT INTO users (username, email, password, profile_picture) VALUES (?, ?, ?, ?)",
+                "INSERT INTO users (username, password, profile_picture) VALUES (?, ?, ?)",
                 user
             )
             print(f"User '{user[0]}' added to the database.")
@@ -116,6 +114,7 @@ def add_dummy_users():
 
     connection.commit()
     connection.close()
+
 
 def add_dummy_reviews():
     connection = get_db_connection()
@@ -155,7 +154,6 @@ def add_dummy_reviews():
 
     connection.commit()
     connection.close()
-
 
 if __name__ == "__main__":
     add_game_entries()
