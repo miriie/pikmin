@@ -157,4 +157,3 @@ if __name__ == "__main__":
     add_game_entries()
     add_dummy_users()
     add_dummy_reviews()
-

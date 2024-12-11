@@ -20,6 +20,9 @@
                 <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
             {% endif %}
         </div>
+        <div class="auth-button">
+            <a href="{{ url_for('search') }}" class="search-button">Search</a>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -37,26 +40,31 @@
         
     </div>
     <div class="review-form">
-        <h2>Submit Your Review</h2>
-        <form method="POST">
-          <div class="form-group">
-            <label for="rating">Rating (1-5):</label>
-            <input type="number" id="rating" name="rating" min="1" max="5" required>
-          </div>
-      
-          <div class="form-group">
-            <label for="review_title">Review Title:</label>
-            <input type="text" id="review_title" name="review_title" required>
-          </div>
-      
-          <div class="form-group">
-            <label for="review">Your Review:</label>
-            <textarea id="review" name="review" required></textarea>
-          </div>
-      
-          <button type="submit" class="submit-button">Submit Review</button>
-        </form>
-      </div>
+        {% if session.get('logged_in') %}
+            <h2>Submit Your Review</h2>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="rating">Rating (1-5):</label>
+                    <input type="number" id="rating" name="rating" min="1" max="5" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="review_title">Review Title:</label>
+                    <input type="text" id="review_title" name="review_title" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="review">Your Review:</label>
+                    <textarea id="review" name="review" required></textarea>
+                </div>
+    
+                <button type="submit" class="submit-button">Submit Review</button>
+            </form>
+        {% else %}
+            <p>You need to be logged in to post a review.</p>
+        {% endif %}
+    </div>
+    
     
     <!-- Reviews Section -->
     <div class="reviews-section">

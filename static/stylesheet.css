@@ -306,3 +306,49 @@ body {
   border-radius: 40px;
   cursor: pointer;
 }
+
+.search-game-link {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* Align elements to the start of the flex container */
+  text-decoration: none;
+  color: inherit;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 15px;
+  transition: transform 0.3s;
+  max-width: 800px;
+  margin: 10px auto;
+}
+
+.search-game-image {
+  width: 150px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.search-game-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content at the start */
+  gap: 5px; /* Small gap between title and rating */
+}
+
+.search-game-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: navy;
+  text-align: left;
+  margin: 0; /* Remove default margin */
+}
+
+.search-game-rating {
+  font-size: 1.1em;
+  color: #ffcc00;
+  font-weight: bold;
+  margin: 0; /* Remove default margin */
+  align-self: flex-start; /* Align the rating to the left, same as title */
+}
