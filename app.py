@@ -99,8 +99,6 @@ def homepage():
 
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
 
-# i moved the login and logout defs to my section
-
 #
 # end trang stuff
 #
