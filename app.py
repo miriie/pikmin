@@ -118,7 +118,7 @@ def login():
         password = request.form["password"]
 
         cursor = connection.cursor()
-        cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
+        cursor.execute("SELECT username, password, profile_picture FROM users WHERE username = ?", (username,))
         existing_user = cursor.fetchone()
         
         if existing_user:
@@ -160,7 +160,7 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         re_password = request.form["re-password"]
-        profile_picture = request.form["pikpic"]
+        profile_picture = "images/" + request.form["pikpic"]
 
         cursor = connection.cursor()
         cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
