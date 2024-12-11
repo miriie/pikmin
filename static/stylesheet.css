@@ -1,0 +1,308 @@
+/* trang css */
+
+/* General Styles */
+* {
+  font-family: 'Cascadia Code';
+}
+body {
+  margin: 10px;
+  padding-top: 100px; 
+  background-image: url(images/background.png); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+}
+
+/* Top Navigation Bar */
+#top-division {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  height: 80px;
+  width: 100%;
+  background-color: yellow;
+  color: navy;
+  text-align: left;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+.corner-image {
+  margin-right: 10px;
+  width: 150px;
+  height: 50px;
+  object-fit: cover;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Left Section: Game Info */
+.game-info {
+  width: 30%;
+  background-color: #fdfd96;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: left;
+}
+
+.game-info h1 {
+  margin-bottom: 10px;
+}
+.game-info p {
+  margin-bottom: 10px;
+}
+
+.rating {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.game-image {
+  width: 60%;
+}
+.game-image img {
+  width: 100%;
+  height: 100%; 
+  max-height: none; 
+  aspect-ratio: 16 / 9; 
+  object-fit: cover;
+  border-radius: 10px; 
+}
+
+.reviews-section {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* Ensure the reviews stack vertically */
+  gap: 15px; /* Add spacing between reviews */
+}
+
+/* Individual Review Container */
+.review {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add spacing between review elements */
+}
+
+/* Profile Section */
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+/* Review Header */
+.review-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-header p {
+  margin: 0;
+}
+  
+.review-title {
+  margin-left: 10px;
+}
+
+  /* Review Text */
+.review-text {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 1em;
+  color: #333;
+}
+
+/* Top Navigation Bar */
+#top-division {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  background-color: yellow;
+  color: navy;
+  padding: 0 20px;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+
+.corner-image {
+  width: 150px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+/* Game Grid */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 20px;
+  padding: 20px;
+  justify-items: center;
+}
+
+.game-card {
+  background-color: white;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.game-card:hover {
+  transform: scale(1.05); /* Subtle zoom effect on hover */
+}
+
+.game-image-homepage {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.game-title {
+  padding: 10px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: navy;
+}
+
+/* Review Form */
+.review-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px; /* Spacing from other elements */
+}
+
+.review-form h2 {
+  font-size: 1.5em;
+  color: navy;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label {
+  font-weight: bold;
+  color: #333;
+}
+
+input, textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  height: 100px; /* Default height */
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  background-color: navy;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Auth Button */
+.auth-button {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.auth-button a {
+  text-decoration: none;
+  color: navy;
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.auth-button a:hover {
+  background-color: navy;
+  color: white;
+}
+
+/* fendy css */
+
+h1 {
+  text-align: center;
+}
+
+body {
+  text-align: center;
+  margin: 10px;
+  padding-top: 100px; 
+}
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+}
+
+.input-box input {
+  padding: 10px 20px 10px 20px;
+  width: 40%;
+  height: 10%;
+  border-radius: 40px;
+}
+
+.button {
+  text-align: center;
+  background-color: green;
+  color: white;
+  width: 10%;
+  padding: 10px;
+  border-radius: 40px;
+  cursor: pointer;
+}

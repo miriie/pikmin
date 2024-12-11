@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div id="top-division">
+    <a href="{{ url_for('homepage') }}">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
+    </a>
+    <span>Minpik Game Review</span>
+    
+    <!-- Login/Logout Button -->
+    <div class="auth-button">
+        {% if not session.get('logged_in') %}
+            <a href="{{ url_for('login') }}" class="login-button">Login</a>
+        {% else %}
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+        {% endif %}
+    </div>
+  </div>
+
+  <h1 id="popular_games_section">Popular Games</h1>
+  <div class="game-grid">
+    {% for game in popular_games %}
+      <div class="game-card">
+        <a href="/game/{{ game['id'] }}">
+          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}" class="game-image-homepage">
+          <div class="game-title">{{ game['title'] }}</div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h1 id="explore_games_section">Explore Games</h1>
+  <div class="game-grid">
+    {% for game in explore_games %}
+      <div class="game-card">
+        <a href="/game/{{ game['id'] }}">
+          <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}" class="game-image-homepage">
+          <div class="game-title">{{ game['title'] }}</div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

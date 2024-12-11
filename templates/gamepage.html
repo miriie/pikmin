@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game['title'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div id="top-division">
+        <a href="{{ url_for('homepage') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
+        </a>
+        <span>Minpik Game Review</span>
+        <div class="auth-button">
+            {% if not session.get('logged_in') %}
+                <a href="{{ url_for('login') }}" class="login-button">Login</a>
+            {% else %}
+                <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="game-image">
+            <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}">
+        </div>
+        <div class="game-info">
+            <h1>{{ game['title'] }}</h1>
+            <p>{{ game['description'] }}</p>
+            <p><strong>Rating:</strong> <span class="rating">{{ game['rating'] }}</span></p>
+        </div>
+
+        <!-- Right Section: Game Image -->
+        
+    </div>
+    <div class="review-form">
+        <h2>Submit Your Review</h2>
+        <form method="POST">
+          <div class="form-group">
+            <label for="rating">Rating (1-5):</label>
+            <input type="number" id="rating" name="rating" min="1" max="5" required>
+          </div>
+      
+          <div class="form-group">
+            <label for="review_title">Review Title:</label>
+            <input type="text" id="review_title" name="review_title" required>
+          </div>
+      
+          <div class="form-group">
+            <label for="review">Your Review:</label>
+            <textarea id="review" name="review" required></textarea>
+          </div>
+      
+          <button type="submit" class="submit-button">Submit Review</button>
+        </form>
+      </div>
+    
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <h2>Reviews:</h2>
+        {% for review in game['reviews'] %}
+            <div class="review">
+                <div class="profile">
+                    <img src="{{ url_for('static', filename=review['profile_picture'] if review['profile_picture'] else 'images/default_profile.png') }}" alt="Profile Picture" class="profile-pic">
+                    <div class="review-header">
+                        <p><strong>{{ review['username'] }}</strong></p>
+                        <p><strong>Rating:</strong> {{ review['rating'] }}</p>
+                        <p><strong>Date:</strong> {{ review['date'] }}</p>
+                    </div>
+                </div>
+                <h3 class="review-title">{{ review['review_title'] }}</h3>
+                <p class="review-text">{{ review['review'] }}</p>
+            </div>
+        {% else %}
+            <p>No reviews available.</p>
+        {% endfor %}
+    </div>    
+</body>
+</html>
