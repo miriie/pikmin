@@ -13,15 +13,14 @@ def get_db_connection():
 
 
 def initialize_database():
-
+    
     create_table_users = '''
     CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    profile_picture TEXT
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        profile_picture TEXT
     );'''
+
 
     create_table_reviews = '''
     CREATE TABLE IF NOT EXISTS reviews (
@@ -31,9 +30,9 @@ def initialize_database():
     review TEXT,
     title TEXT,
     date TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    username TEXT NOT NULL,
+    profile_picture TEXT,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
     );'''
 
     create_table_games = '''
@@ -89,27 +88,24 @@ def add_game_entries():
     print("New games have been added (if they weren't duplicates).")
 
 def add_dummy_users():
-    """Add dummy users to the database."""
+    # """Add dummy users to the database."""
     connection = get_db_connection()
     cursor = connection.cursor()
 
     users_data = [
-        ("user1234", "user1234@example.com", "password123", "images/clover.png"),
-        ("zara fendy", "zara@example.com", "securepass", "images/clover.png"),
-        ("user1", "user1@example.com", "mypassword", "images/clover.png"),
-        ("user2", "user2@example.com", "letmein", "images/clover.png"),
-        ("user3", "user3@example.com", "hunter2", "images/clover.png"),
-        ("user4", "user4@example.com", "password4", "images/clover.png")
+        ("user1234", "password123", "images/clover.png"),
+        ("zara fendy", "securepass", "images/clover.png"),
+        ("user1", "mypassword", "images/clover.png"),
+        ("user2", "letmein", "images/clover.png"),
+        ("user3", "hunter2", "images/clover.png"),
+        ("user4", "password4", "images/clover.png")
     ]
 
     # Insert users only if they don't already exist
     for user in users_data:
-        cursor.execute("SELECT COUNT(*) FROM users WHERE email = ?", (user[1],))
+        cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?", (user[0],))
         if cursor.fetchone()[0] == 0:
-            cursor.execute(
-                "INSERT INTO users (username, email, password, profile_picture) VALUES (?, ?, ?, ?)",
-                user
-            )
+            cursor.execute("INSERT INTO users (username, password, profile_picture) VALUES (?, ?, ?)", user)
             print(f"User '{user[0]}' added to the database.")
         else:
             print(f"User '{user[0]}' already exists. Skipping.")
@@ -117,15 +113,16 @@ def add_dummy_users():
     connection.commit()
     connection.close()
 
+
 def add_dummy_reviews():
     connection = get_db_connection()
     cursor = connection.cursor()
 
     reviews_data = [
-        ('Pikmin 4', 5, 'Best game ever!', 'Epic Adventure', '2024-12-01', 'user1234'),
-        ('Pikmin 4', 5, 'Simply amazing!', 'Masterpiece', '2024-12-02', 'zara fendy'),
-        ("The Legend of Zelda: Tears of the Kingdom", 4, "Fantastic sequel!", "Challenging Fun", '2024-12-03', "user1"),
-        ("Mario Party Superstars", 3, "Enjoyable with friends.", "Fun but Repetitive", '2024-12-03', "user2")
+        ('Pikmin 4', 5, 'Best game ever!', 'Epic Adventure', '2024-12-01', 'images/clover.png', 'user1234'),
+        ('Pikmin 4', 5, 'Simply amazing!', 'Masterpiece', '2024-12-02', 'images/clover.png', 'zara fendy'),
+        ("The Legend of Zelda: Tears of the Kingdom", 4, "Fantastic sequel!", "Challenging Fun", '2024-12-03', 'images/clover.png', "user1"),
+        ("Mario Party Superstars", 3, "Enjoyable with friends.", "Fun but Repetitive", '2024-12-03', 'images/clover.png', "user2")
     ]
 
     for review in reviews_data:
@@ -134,28 +131,27 @@ def add_dummy_reviews():
         game_id_row = cursor.fetchone()
 
         # Fetch user_id for the given username
-        cursor.execute("SELECT id FROM users WHERE username = ?", (review[5],))
-        user_id_row = cursor.fetchone()
+        cursor.execute("SELECT username FROM users WHERE username = ?", (review[6],))
+        username_row = cursor.fetchone()
 
-        if game_id_row and user_id_row:
+        if game_id_row and username_row:
             game_id = game_id_row[0]
-            user_id = user_id_row[0]
+            username = username_row[0]
 
             # Insert the review
             cursor.execute(
-                "INSERT INTO reviews (game_id, rating, review, title, date, user_id) VALUES (?, ?, ?, ?, ?, ?)",
-                (game_id, review[1], review[2], review[3], review[4], user_id)
+                "INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (game_id, review[1], review[2], review[3], review[4], review[5], review[6])
             )
-            print(f"Review for '{review[0]}' added by {review[5]}.")
+            print(f"Review for '{review[0]}' added by {review[6]}.")
         else:
             if not game_id_row:
                 print(f"Game '{review[0]}' not found in the database. Skipping.")
-            if not user_id_row:
-                print(f"User '{review[5]}' not found in the database. Skipping.")
+            if not username_row:
+                print(f"User '{review[6]}' not found in the database. Skipping.")
 
     connection.commit()
     connection.close()
-
 
 if __name__ == "__main__":
     add_game_entries()
