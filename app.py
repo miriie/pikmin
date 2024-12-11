@@ -26,7 +26,7 @@ def game_page(game_id):
         rating = int(request.form['rating'])
         review_title = request.form['review_title']
         review_text = request.form['review']
-        profile_picture = 'images/clover.png'
+        profile_picture = session['profile_picture']
         
         # Get the current time in Sydney, Australia
         sydney_tz = pytz.timezone('Australia/Sydney')
@@ -125,6 +125,7 @@ def login():
             db_password = existing_user[1]
             if password == db_password:
                 session["username"] = username
+                session["profile_picture"] = existing_user[2]
                 session["logged_in"] = True
                 return redirect(url_for('homepage'))
             else:
@@ -167,22 +168,22 @@ def register():
         
         # user taken
         if existing_user:
-            return render_template("register.html", message= "Error: Username already taken")
+            return render_template("register.html", message= "Error: Username already taken", images=images)
 
         # password min length
         if len(password) <= 8:
-            return render_template("register.html", message= "Error: Password must be at least 8 characters long")
+            return render_template("register.html", message= "Error: Password must be at least 8 characters long", images=images)
 
         # passwords match
         if password != re_password:
-            return render_template("register.html", message= "Error: Passwords do not match")
+            return render_template("register.html", message= "Error: Passwords do not match", images=images)
         
         # successful registration 
         cursor = connection.cursor()
         cursor.execute("INSERT INTO users(username, password, profile_picture) VALUES (?, ?, ?)", (username, password, profile_picture))
         connection.commit()
 
-        return render_template("register.html", message= "Registration successful")
+        return render_template("register.html", message= "Registration successful", images=images)
     return render_template("register.html", images=images)
 
 
