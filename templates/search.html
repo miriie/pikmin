@@ -28,16 +28,18 @@
     <!-- Search Bar -->
     <div class="search-bar">
         <form id="search-bar" method="POST" action="/search">
-            <input type="text" name="search-bar" placeholder="Search...">
+            <input type="text" name="search-bar" placeholder="Search by name...">
+            <h3>OR</h3>
+            <h3 style="text-align: left;">Filter by Tags:</h3>
             <div class="tags-filter">
-                <label>Filter by Tags:</label>
-                <select id="tags" name="tags" multiple>
-                    {% for tag in tags %}
-                    <option value="{{ tag }}" {% if tag in selected_tags %} selected {% endif %}>{{ tag }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Search</button>
-            </div>
+                {% for tag in tags %}
+                    <div class="tag-container">
+                        <input type="checkbox" name="tags" value="{{ tag }}" id="tag-{{ tag }}" {% if tag in selected_tags %} checked {% endif %}>
+                        <label for="tag-{{ tag }}">{{ tag }}</label>
+                    </div>
+                {% endfor %}                
+            </div> 
+            <button type="submit">Search</button>                      
         </form>
         <br>
     </div>

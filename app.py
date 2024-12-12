@@ -129,7 +129,7 @@ def search():
             "Life-simulator",
             "Cooking",
             "Sports"
-        ])
+        ])  
 
     if request.method == "POST":
 
