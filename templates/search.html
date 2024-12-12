@@ -25,10 +25,22 @@
         </div>
     </div>
     
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <form id="search-bar" method="POST" action="/search">
+            <input type="text" name="search-bar" placeholder="Search...">
+            <input type="submit" hidden/>
+        </form>
+        <br>
+    </div>
+
     <!-- Display list of games -->
     <div class="search-game-grid">
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %} 
         <h3 class="all-games-heading">All Games:</h3>
-        <div class="game-cards-container">
+        <div class="game-cards-container">   
             {% for game in games %}
                 <div class="search-game-card">
                     <a href="/game/{{ game['id'] }}" class="search-game-link">

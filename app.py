@@ -99,7 +99,9 @@ def homepage():
 
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
 
-@app.route('/search')
+# fendy editing this now
+
+@app.route('/search', methods=['GET', 'POST'])
 def search():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -107,6 +109,18 @@ def search():
     # Fetch games ordered alphabetically by title
     cursor.execute("SELECT id, title, description, rating, image FROM games ORDER BY title ASC")
     games = cursor.fetchall()
+
+    if request.method == 'POST':
+        searched_item = request.form["search-bar"]
+        cursor.execute('SELECT * FROM games WHERE title = ?', (searched_item,))
+        existing_game = cursor.fetchone()
+
+        if existing_game:
+            cursor.execute('SELECT id, title, description, rating, image FROM games WHERE title = ?', (searched_item,))
+            games = cursor.fetchall()
+            return render_template("search.html", games=games, message= f"{searched_item} exists!")
+        else:
+            return render_template("search.html", games=games, message= f"{searched_item} does not exist")
 
     connection.close()
     return render_template('search.html', games=games)
