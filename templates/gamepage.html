@@ -14,6 +14,9 @@
         </a>
         <span>Minpik Game Review</span>
         <div class="auth-button">
+            <a href="{{ url_for('search') }}" class="search-button">Search</a>
+        </div>
+        <div class="auth-button">
             {% if not session.get('logged_in') %}
                 <a href="{{ url_for('login') }}" class="login-button">Login</a>
             {% else %}
@@ -21,6 +24,7 @@
             {% endif %}
         </div>
     </div>
+    
 
     <!-- Main Content -->
     <div class="content-wrapper">

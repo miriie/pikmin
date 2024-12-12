@@ -11,8 +11,9 @@
         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
     </a>
     <span>Minpik Game Review</span>
-    
-    <!-- Login/Logout Button -->
+    <div class="auth-button">
+        <a href="{{ url_for('search') }}" class="search-button">Search</a>
+    </div>
     <div class="auth-button">
         {% if not session.get('logged_in') %}
             <a href="{{ url_for('login') }}" class="login-button">Login</a>
@@ -21,6 +22,7 @@
         {% endif %}
     </div>
   </div>
+
 
   <h1 id="popular_games_section">Popular Games</h1>
   <div class="game-grid">

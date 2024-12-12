@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Games</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div id="top-division">
+        <a href="{{ url_for('homepage') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
+        </a>
+        <span>Minpik Game Review</span>
+        <div class="auth-button">
+            <a href="{{ url_for('search') }}" class="search-button">Search</a>
+        </div>
+        <div class="auth-button">
+            {% if not session.get('logged_in') %}
+                <a href="{{ url_for('login') }}" class="login-button">Login</a>
+            {% else %}
+                <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Display list of games -->
+    <div class="search-game-grid">
+        <h3 class="all-games-heading">All Games:</h3>
+        <div class="game-cards-container">
+            {% for game in games %}
+                <div class="search-game-card">
+                    <a href="/game/{{ game['id'] }}" class="search-game-link">
+                        <img src="{{ url_for('static', filename=game['image']) }}" alt="{{ game['title'] }}" class="search-game-image">
+                        <div class="search-game-info">
+                            <p class="search-game-title">{{ game['title'] }}</p>
+                            <p class="search-game-rating">Rating: {{ game['rating'] or 'N/A' }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+</body>
+</html>
