@@ -99,6 +99,18 @@ def homepage():
 
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
 
+@app.route('/search')
+def search():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Fetch games ordered alphabetically by title
+    cursor.execute("SELECT id, title, description, rating, image FROM games ORDER BY title ASC")
+    games = cursor.fetchall()
+
+    connection.close()
+    return render_template('search.html', games=games)
+
 #
 # end trang stuff
 #
@@ -169,7 +181,7 @@ def register():
             return render_template("register.html", message= "Error: Username already taken", images=images)
 
         # password min length
-        if len(password) <= 8:
+        if len(password) < 8:
             return render_template("register.html", message= "Error: Password must be at least 8 characters long", images=images)
 
         # passwords match
