@@ -21,6 +21,7 @@ def get_db_connection():
 @app.route('/game/<int:game_id>', methods=['GET', 'POST'])
 def game_page(game_id):
     connection = get_db_connection()
+    cursor = connection.cursor()
 
     if request.method == 'POST':
         # Handle the form submission for adding a review
@@ -39,6 +40,31 @@ def game_page(game_id):
         INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
+        # trying to get interactive tags to work ASDFGHLKSSFASSD
+        selected_tags = request.form["tag"]
+
+        if selected_tags:
+            tags = [
+            "Multi-player", 
+            "Single-player", 
+            "Strategy", 
+            "Platformer", 
+            "Adventure", 
+            "Open-world", 
+            "Combat", 
+            "Competitive",
+            "Mini-games",
+            "Casual",
+            "Life-simulator",
+            "Cooking",
+            "Sports"
+        ] 
+            cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {selected_tags}""")
+            existing_game = cursor.fetchall()
+            return render_template("search.html", games=existing_game, tags=selected_tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
+
+
+
         connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
     
@@ -60,7 +86,6 @@ def game_page(game_id):
     if game:
         # sorting tags
         tags = sorted(game['tags'].split(','))
-
         game_data = {
             "title": game['title'],
             "description": game['description'],
@@ -78,6 +103,7 @@ def game_page(game_id):
                 } for r in reviews
             ]
         }
+
         return render_template('gamepage.html', game=game_data, tags=tags)
     else:
         return "Page not found", 404

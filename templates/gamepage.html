@@ -36,15 +36,18 @@
             <p>{{ game['description'] }}</p>
             <p><strong>Rating:</strong> <span class="rating">{{ game['rating'] }}</span></p>
             <p><strong>Tags:</strong>
-                <div class="game-tags">
-                    {% for tag in tags %}
-                        <button type="button" class="tag-button" value="{{ tag }}">
-                            {{ tag }}
-                        </button>
-                    {% endfor %}
-                </div>
+                <form method="POST">
+                    <div class="game-tags">
+                        {% for tag in tags %}
+                            <a href="{{ url_for('search', tag=tag) }}">
+                                <button type="button" class="tag-button" value="{{ tag }}" id="tag-{{ tag }}" name="{{ tag }}">
+                                    {{ tag }}
+                                </button>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </form>
             </span></p>
-
         </div>
 
         <!-- Right Section: Game Image -->
