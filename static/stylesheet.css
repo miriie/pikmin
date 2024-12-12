@@ -341,10 +341,10 @@ textarea {
     margin: 0; /* Remove default margin */
     align-self: flex-start; /* Align the rating to the left, same as title */
 }
-/* fendy css search bar */
+
 .search-bar input {
   padding: 10px 20px 10px 20px;
-  width: 35%;
+  width: 50%;
   height: 6%;
   border-radius: 5px;
 }

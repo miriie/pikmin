@@ -3,6 +3,8 @@ from flask import Flask, render_template, redirect, url_for, session, request
 from datetime import datetime
 import pytz
 import sqlite3
+import string
+import unicodedata
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -110,16 +112,44 @@ def search():
     cursor.execute("SELECT id, title, description, rating, image FROM games ORDER BY title ASC")
     games = cursor.fetchall()
 
-    if request.method == 'POST':
+    if request.method == "POST":
+        
+        banned_punctuation = string.punctuation + ":'" # get rid of inconsistencies when user searches up a term
         searched_item = request.form["search-bar"]
-        cursor.execute('SELECT * FROM games WHERE title = ?', (searched_item,))
-        existing_game = cursor.fetchone()
-
+        searched_item = unicodedata.normalize('NFD', searched_item).encode('ascii', 'ignore').decode('utf-8') # bruh i had to add this specific case just for Pokémon Violet :(
+        searched_item = searched_item.replace(" ", "").translate(str.maketrans("", "", banned_punctuation)).lower()
+        searched_item = f"%{searched_item}%" # if the searched item is partially typed up, and is in one of the databases' game titles, the search works
+        
+        # haha what a hot mess
+        cursor.execute("""
+                SELECT * FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
+                (title, ' ', ''), 
+                ',', ''), 
+                '.', ''), 
+                ':', ''), 
+                "'", ''),
+                'é', 'e')
+                ) LIKE ?""", 
+                (searched_item,))
+        existing_game = cursor.fetchall()
+        
+        # check if game searched exists in the database
         if existing_game:
-            cursor.execute('SELECT id, title, description, rating, image FROM games WHERE title = ?', (searched_item,))
+            cursor.execute("""SELECT id, title, description, rating, image 
+            FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
+                (title, ' ', ''), 
+                ',', ''), 
+                '.', ''), 
+                ':', ''), 
+                "'", ''),
+                'é', 'e')
+                ) LIKE ?""", 
+                (searched_item,))
             games = cursor.fetchall()
-            return render_template("search.html", games=games, message= f"{searched_item} exists!")
+            searched_item = request.form["search-bar"]
+            return render_template("search.html", games=games, message= f"Showing results for: {searched_item}")
         else:
+            searched_item = request.form["search-bar"]
             return render_template("search.html", games=games, message= f"{searched_item} does not exist")
 
     connection.close()
