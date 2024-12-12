@@ -43,7 +43,7 @@ def game_page(game_id):
         connection.commit()
     
     # Fetch game information based on the game ID
-    query_game = "SELECT title, description, rating, image FROM games WHERE id = ?"
+    query_game = "SELECT title, description, tags, rating, image FROM games WHERE id = ?"
     game = connection.execute(query_game, (game_id,)).fetchone()
 
     # Fetch reviews for the game
@@ -58,9 +58,13 @@ def game_page(game_id):
     connection.close()
 
     if game:
+        # sorting tags
+        tags = sorted(game['tags'].split(','))
+
         game_data = {
             "title": game['title'],
             "description": game['description'],
+            "tags": tags,
             "rating": game['rating'],
             "image": game['image'],  
             "reviews": [
@@ -74,7 +78,7 @@ def game_page(game_id):
                 } for r in reviews
             ]
         }
-        return render_template('gamepage.html', game=game_data)
+        return render_template('gamepage.html', game=game_data, tags=tags)
     else:
         return "Page not found", 404
 
@@ -111,49 +115,68 @@ def search():
     # Fetch games ordered alphabetically by title
     cursor.execute("SELECT id, title, description, rating, image FROM games ORDER BY title ASC")
     games = cursor.fetchall()
+    tags = sorted([
+            "Multi-player", 
+            "Single-player", 
+            "Strategy", 
+            "Platformer", 
+            "Adventure", 
+            "Open-world", 
+            "Combat", 
+            "Competitive",
+            "Mini-games",
+            "Casual",
+            "Life-simulator",
+            "Cooking",
+            "Sports"
+        ])
 
     if request.method == "POST":
+
+        searched_name = request.form["search-bar"]
+        selected_tags = request.form.getlist("tags")
+
+        if searched_name:
+            banned_punctuation = string.punctuation + ":'" # get rid of inconsistencies when user searches up a term
+            searched_name = unicodedata.normalize('NFD', searched_name).encode('ascii', 'ignore').decode('utf-8') # bruh i had to add this specific case just for Pokémon Violet :(
+            searched_name = searched_name.replace(" ", "").translate(str.maketrans("", "", banned_punctuation)).lower()
+            searched_name = f"%{searched_name}%" # if the searched name is partially typed up, and is in one of the databases' game titles, the search works
         
-        banned_punctuation = string.punctuation + ":'" # get rid of inconsistencies when user searches up a term
-        searched_item = request.form["search-bar"]
-        searched_item = unicodedata.normalize('NFD', searched_item).encode('ascii', 'ignore').decode('utf-8') # bruh i had to add this specific case just for Pokémon Violet :(
-        searched_item = searched_item.replace(" ", "").translate(str.maketrans("", "", banned_punctuation)).lower()
-        searched_item = f"%{searched_item}%" # if the searched item is partially typed up, and is in one of the databases' game titles, the search works
-        
-        # haha what a hot mess
-        cursor.execute("""
-                SELECT * FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
-                (title, ' ', ''), 
-                ',', ''), 
-                '.', ''), 
-                ':', ''), 
-                "'", ''),
-                'é', 'e')
-                ) LIKE ?""", 
-                (searched_item,))
-        existing_game = cursor.fetchall()
-        
-        # check if game searched exists in the database
-        if existing_game:
+            # haha what a hot mess
             cursor.execute("""SELECT id, title, description, rating, image 
             FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
-                (title, ' ', ''), 
+                (title, 
+                ' ', ''),
                 ',', ''), 
-                '.', ''), 
-                ':', ''), 
+                '.', ''),
+                ':', ''),
                 "'", ''),
                 'é', 'e')
-                ) LIKE ?""", 
-                (searched_item,))
-            games = cursor.fetchall()
-            searched_item = request.form["search-bar"]
-            return render_template("search.html", games=games, message= f"Showing results for: {searched_item}")
-        else:
-            searched_item = request.form["search-bar"]
-            return render_template("search.html", games=games, message= f"{searched_item} does not exist")
+                ) LIKE ?""",
+                (searched_name,))
+            existing_game = cursor.fetchall()
+            
+            # check if game searched exists in the database
+            if existing_game:
+                games = existing_game
+                searched_name = request.form["search-bar"]
+                return render_template("search.html", games=games, tags=tags, message= f'Showing results for "{searched_name}":')
+            else:
+                searched_name = request.form["search-bar"]
+                return render_template("search.html", games="", tags=tags, message= f'Error: No games found for "{searched_name}":')
 
+        elif selected_tags:
+            tags_conditions = " AND ".join([f"tags LIKE '%{tag}%'" for tag in selected_tags])
+            cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {tags_conditions}""")
+            existing_game = cursor.fetchall()
+            if existing_game:
+                games = existing_game
+                return render_template("search.html", games=games, tags=tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
+            else:
+                return render_template("search.html", games="", tags=tags, message= f'Error: No games found for tags: "{", ".join(selected_tags)}":')
+        
     connection.close()
-    return render_template('search.html', games=games)
+    return render_template('search.html', games=games, tags=tags, message= f'All Games:')
 
 #
 # end trang stuff
@@ -236,8 +259,10 @@ def register():
         cursor = connection.cursor()
         cursor.execute("INSERT INTO users(username, password, profile_picture) VALUES (?, ?, ?)", (username, password, profile_picture))
         connection.commit()
-
-        return render_template("register.html", message= "Registration successful", images=images)
+        session["username"] = username
+        session["profile_picture"] = profile_picture
+        session["logged_in"] = True
+        return redirect(url_for('homepage'))
     return render_template("register.html", images=images)
 
 

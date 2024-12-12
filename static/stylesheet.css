@@ -222,6 +222,27 @@ body {
   color: navy;
 }
 
+.game-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: left;
+}
+
+.tag-button {
+  background-color: navy;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tag-button:hover {
+  background-color: #0056b3;
+}
+
 /* Review Form */
 .review-form {
   background-color: #f9f9f9;
@@ -408,4 +429,3 @@ h1 {
 .pikpic input[type="radio"]:checked + img {
   border-color: yellow;
 }
-
