@@ -416,12 +416,15 @@ textarea {
 }
 
 .search-search-button {
-  text-align: center;
-  background-color: white;
+  text-decoration: none;
   color: navy;
-  width: 10%;
-  padding: 10px;
+  background-color: white;
+  padding: 10px 15px;
+  border: transparent;
   border-radius: 5px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
   cursor: pointer;
 }
 
