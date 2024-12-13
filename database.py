@@ -95,11 +95,15 @@ def add_dummy_users():
 
     users_data = [
         ("user1234", "password123", "images/clover.png"),
-        ("zara fendy", "securepass", "images/clover.png"),
-        ("user1", "mypassword", "images/clover.png"),
-        ("user2", "letmein", "images/clover.png"),
-        ("user3", "hunter2", "images/clover.png"),
-        ("user4", "password4", "images/clover.png")
+        ("pik", "securepass", "images/purplepik.png"),
+        ("user1", "mypassword", "images/wingpik.png"),
+        ("user2", "letmein", "images/yellowpik.png"),
+        ("user3", "hunter2", "images/rockpik.png"),
+        ("user4", "password4", "images/glowpik.png"),
+        ("rice", "firebird", "images/redpik.png"),
+        ("delta", "triangular", "images/icepik.png"),
+        ("mire", "fending", "images/whitepik.png"),
+        ("bud", "oldpal", "images/bluepik.png")
     ]
 
     # Insert users only if they don't already exist
@@ -121,9 +125,17 @@ def add_dummy_reviews():
 
     reviews_data = [
         ('Pikmin 4', 5, 'Best game ever!', 'Epic Adventure', '2024-12-01', 'images/clover.png', 'user1234'),
-        ('Pikmin 4', 5, 'Simply amazing!', 'Masterpiece', '2024-12-02', 'images/clover.png', 'zara fendy'),
-        ("The Legend of Zelda: Tears of the Kingdom", 4, "Fantastic sequel!", "Challenging Fun", '2024-12-03', 'images/clover.png', "user1"),
-        ("Mario Party Superstars", 3, "Enjoyable with friends.", "Fun but Repetitive", '2024-12-03', 'images/clover.png', "user2")
+        ('Pikmin 4', 5, 'Simply amazing!', 'Masterpiece', '2024-12-02', 'images/wingpik.png', 'user1'),
+        ("The Legend of Zelda: Tears of the Kingdom", 5, "Fantastic sequel!", "Challenging Fun", '2024-12-03', 'images/yellowpik.png', "user2"),
+        ("The Legend of Zelda: Tears of the Kingdom", 1, "I thought the main character was ZELDA. You know, like in the title \"The Legend of ZELDA\"??? But no, the main character is a twink named Link who probably likes pink. Now, I can't even get a blink or wink of sleep.", "MISLEADING.", '2024-12-09', 'images/purplepik.png', "pik"),
+        ("Mario Party Superstars", 3, "Enjoyable with friends.", "Fun but Repetitive", '2024-12-03', 'images/rockpik.png', "user3"),
+        ("Cooking Mama: Cookstar", 2, "I've never been very good cooking, but I wanted to try this game out to see what it was like. Except, I kept burning the food, just like how I would in real life. Whenever I see Mama's disappointed face, I feel so guilty. I don't think I can open the game ever again.", "I'm so sorry Mama :(", '2024-12-11', 'images/rockpik.png', "user3"),
+        ("Animal Crossing: New Horizons", 4, "I love customising my island and spending time with my cute villagers!", "Relaxing Getaway", '2024-11-30', 'images/glowpik.png', "user4"),
+        ("Pokémon Violet", 2, "Love the open-world experience with lots of new Pokemon, but it's a bit laggy :/", "Good but Laggy", '2024-12-05', 'images/redpik.png', "rice"),
+        ("Kirby's Return to Dream Land Deluxe", 4, "Haven't played a Kirby game in a while, but it's still fun and nostalgic!", "Classic Fun", '2024-12-06', 'images/icepik.png', "delta"),
+        ("Splatoon 3", 4, "A blast to play with friends and wayyyyy better than Splatoon 2!", "The Better Sequel", '2024-12-07', 'images/purplepik.png', "pik"),
+        ("Super Smash Bros. Ultimate", 3, "Bro these players are trash. I'm the king of Super Smash Bros", "Too easy", '2024-12-08', 'images/whitepik.png', "mire"),
+        ("Nintendo Switch Sports", 4, "I hate exercising, but this was a fun way to stay active", "Great for Exercise", '2024-12-10', 'images/bluepik.png', "bud")
     ]
 
     for review in reviews_data:
