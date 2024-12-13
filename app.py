@@ -41,27 +41,27 @@ def game_page(game_id):
         VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
         # trying to get interactive tags to work ASDFGHLKSSFASSD
-        selected_tags = request.form["tag"]
+        # selected_tags = request.form["tag"]
 
-        if selected_tags:
-            tags = [
-            "Multi-player", 
-            "Single-player", 
-            "Strategy", 
-            "Platformer", 
-            "Adventure", 
-            "Open-world", 
-            "Combat", 
-            "Competitive",
-            "Mini-games",
-            "Casual",
-            "Life-simulator",
-            "Cooking",
-            "Sports"
-        ] 
-            cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {selected_tags}""")
-            existing_game = cursor.fetchall()
-            return render_template("search.html", games=existing_game, tags=selected_tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
+        # if selected_tags:
+        #     tags = [
+        #     "Multi-player", 
+        #     "Single-player", 
+        #     "Strategy", 
+        #     "Platformer", 
+        #     "Adventure", 
+        #     "Open-world", 
+        #     "Combat", 
+        #     "Competitive",
+        #     "Mini-games",
+        #     "Casual",
+        #     "Life-simulator",
+        #     "Cooking",
+        #     "Sports"
+        # ] 
+        #     cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {selected_tags}""")
+        #     existing_game = cursor.fetchall()
+        #     return render_template("search.html", games=existing_game, tags=selected_tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
 
 
 

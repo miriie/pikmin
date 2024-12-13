@@ -478,6 +478,7 @@ h1 {
 
 .pikpic img {
   align-items: center;
+  cursor: pointer;
   width: 60px;
   height: 60px;
   background-color: white;
