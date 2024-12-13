@@ -328,7 +328,6 @@ textarea {
 }
 
 .search-game-card {
-    /* Your other card styling */
     margin-bottom: 15px; /* Space between game cards */
 }
 
@@ -373,6 +372,14 @@ textarea {
     font-weight: bold;
     margin: 0; /* Remove default margin */
     align-self: flex-start; /* Align the rating to the left, same as title */
+}
+
+.search-bar {
+  margin-left: 15px;
+}
+
+.search-bar h3{
+  font-size: 20px;
 }
 
 .search-bar input {
