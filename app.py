@@ -21,7 +21,6 @@ def get_db_connection():
 @app.route('/game/<int:game_id>', methods=['GET', 'POST'])
 def game_page(game_id):
     connection = get_db_connection()
-    cursor = connection.cursor()
 
     if request.method == 'POST':
         # Handle the form submission for adding a review
@@ -40,30 +39,6 @@ def game_page(game_id):
         INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
-        # trying to get interactive tags to work ASDFGHLKSSFASSD
-        # selected_tags = request.form["tag"]
-
-        # if selected_tags:
-        #     tags = [
-        #     "Multi-player", 
-        #     "Single-player", 
-        #     "Strategy", 
-        #     "Platformer", 
-        #     "Adventure", 
-        #     "Open-world", 
-        #     "Combat", 
-        #     "Competitive",
-        #     "Mini-games",
-        #     "Casual",
-        #     "Life-simulator",
-        #     "Cooking",
-        #     "Sports"
-        # ] 
-        #     cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {selected_tags}""")
-        #     existing_game = cursor.fetchall()
-        #     return render_template("search.html", games=existing_game, tags=selected_tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
-
-
 
         connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
@@ -155,52 +130,51 @@ def search():
             "Life-simulator",
             "Cooking",
             "Sports"
-        ])  
-
-    if request.method == "POST":
-
-        searched_name = request.form["search-bar"]
-        selected_tags = request.form.getlist("tags")
-
-        if searched_name:
-            banned_punctuation = string.punctuation + ":'" # get rid of inconsistencies when user searches up a term
-            searched_name = unicodedata.normalize('NFD', searched_name).encode('ascii', 'ignore').decode('utf-8') # bruh i had to add this specific case just for Pokémon Violet :(
-            searched_name = searched_name.replace(" ", "").translate(str.maketrans("", "", banned_punctuation)).lower()
-            searched_name = f"%{searched_name}%" # if the searched name is partially typed up, and is in one of the databases' game titles, the search works
+        ])
+    
+    selected_tags = request.args.getlist('tags') or request.form.getlist('tags') # get selected tags from game page buttons or from search filter
+    searched_name = request.form.get('search-bar', '') if request.method == 'POST' else '' 
+    
+    if searched_name:
+        banned_punctuation = string.punctuation + ":'" # get rid of inconsistencies when user searches up a term
+        searched_name = unicodedata.normalize('NFD', searched_name).encode('ascii', 'ignore').decode('utf-8') # bruh i had to add this specific case just for Pokémon Violet :(
+        searched_name = searched_name.replace(" ", "").translate(str.maketrans("", "", banned_punctuation)).lower()
+        searched_name = f"%{searched_name}%" # if the searched name is partially typed up, and is in one of the databases' game titles, the search works
+    
+        # haha what a hot mess (again homogenising game titles and getting rid of grammar so it's easier to match)
+        cursor.execute("""SELECT id, title, description, rating, image 
+        FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
+            (title, 
+            ' ', ''),
+            ',', ''), 
+            '.', ''),
+            ':', ''),
+            "'", ''),
+            'é', 'e')
+            ) LIKE ?""",
+            (searched_name,))
+        existing_game = cursor.fetchall()
         
-            # haha what a hot mess
-            cursor.execute("""SELECT id, title, description, rating, image 
-            FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
-                (title, 
-                ' ', ''),
-                ',', ''), 
-                '.', ''),
-                ':', ''),
-                "'", ''),
-                'é', 'e')
-                ) LIKE ?""",
-                (searched_name,))
-            existing_game = cursor.fetchall()
-            
-            # check if game searched exists in the database
-            if existing_game:
-                games = existing_game
-                searched_name = request.form["search-bar"]
-                return render_template("search.html", games=games, tags=tags, message= f'Showing results for "{searched_name}":')
-            else:
-                searched_name = request.form["search-bar"]
-                return render_template("search.html", games="", tags=tags, message= f'Error: No games found for "{searched_name}":')
+        # check if game name searched exists in the database
+        if existing_game:
+            games = existing_game
+            searched_name = request.form["search-bar"]
+            return render_template("search.html", games=games, tags=tags, message= f'Showing results for "{searched_name}":')
+        else:
+            searched_name = request.form["search-bar"]
+            return render_template("search.html", games="", tags=tags, message= f'Error: No games found for "{searched_name}":')
 
-        elif selected_tags:
-            tags_conditions = " AND ".join([f"tags LIKE '%{tag}%'" for tag in selected_tags])
-            cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {tags_conditions}""")
-            existing_game = cursor.fetchall()
-            if existing_game:
-                games = existing_game
-                return render_template("search.html", games=games, tags=tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
-            else:
-                return render_template("search.html", games="", tags=tags, message= f'Error: No games found for tags: "{", ".join(selected_tags)}":')
-        
+    # filter games that fit selected tags
+    elif selected_tags:
+        tags_conditions = " AND ".join([f"tags LIKE '%{tag}%'" for tag in selected_tags])
+        cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {tags_conditions}""")
+        existing_game = cursor.fetchall()
+        if existing_game:
+            games = existing_game
+            return render_template("search.html", games=games, tags=tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
+        else:
+            return render_template("search.html", games="", tags=tags, message= f'Error: No games found for tags: "{", ".join(selected_tags)}":')
+    
     connection.close()
     return render_template('search.html', games=games, tags=tags, message= f'All Games:')
 

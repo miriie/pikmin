@@ -38,12 +38,8 @@
             <p><strong>Tags:</strong>
                 <form method="POST">
                     <div class="game-tags">
-                        {% for tag in tags %}
-                            <a href="{{ url_for('search', tag=tag) }}">
-                                <button type="button" class="tag-button" value="{{ tag }}" id="tag-{{ tag }}" name="{{ tag }}">
-                                    {{ tag }}
-                                </button>
-                            </a>
+                        {% for tag in game['tags'] %}
+                            <a href="{{ url_for('search') }}?tags={{ tag }}" class="tag-button">{{ tag }}</a>
                         {% endfor %}
                     </div>
                 </form>
