@@ -21,6 +21,12 @@ def get_db_connection():
 @app.route('/game/<int:game_id>', methods=['GET', 'POST'])
 def game_page(game_id):
     connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # calculate avg rating from reviews
+    cursor.execute("SELECT AVG(rating) FROM reviews WHERE game_id = ?", (game_id,))
+    average_rating = cursor.fetchone()[0]
+    cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
 
     if request.method == 'POST':
         # Handle the form submission for adding a review
@@ -40,8 +46,12 @@ def game_page(game_id):
         VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
 
+        # update new avg rating
+        cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
+
         connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
+        return redirect(url_for('game_page', game_id=game_id))
     
     # Fetch game information based on the game ID
     query_game = "SELECT title, description, tags, rating, image FROM games WHERE id = ?"
@@ -61,11 +71,12 @@ def game_page(game_id):
     if game:
         # sorting tags
         tags = sorted(game['tags'].split(','))
+        # display game data
         game_data = {
             "title": game['title'],
             "description": game['description'],
             "tags": tags,
-            "rating": game['rating'],
+            "rating": game['rating'] if reviews else "N/A",
             "image": game['image'],  
             "reviews": [
                 {
