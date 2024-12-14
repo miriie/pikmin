@@ -17,7 +17,7 @@ def sw():
     response.headers['Content-Type'] = 'application/javascript'
     return response
 
-#s
+#
 # end flame stuff
 #
 
