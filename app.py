@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, session, request, m
 from datetime import datetime
 import pytz
 import sqlite3
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -147,10 +148,11 @@ def login():
         cursor = connection.cursor()
         cursor.execute("SELECT username, password, profile_picture FROM users WHERE username = ?", (username,))
         existing_user = cursor.fetchone()
-        
+    
+
         if existing_user:
-            db_password = existing_user[1]
-            if password == db_password:
+            db_password = existing_user[1].encode('utf-8')
+            if bcrypt.checkpw(password.encode('utf-8'),db_password):
                 session["username"] = username
                 session["profile_picture"] = existing_user[2]
                 session["logged_in"] = True
@@ -205,9 +207,12 @@ def register():
         if password != re_password:
             return render_template("register.html", message= "Error: Passwords do not match", images=images)
         
+        # Hash the password
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
         # successful registration 
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO users(username, password, profile_picture) VALUES (?, ?, ?)", (username, password, profile_picture))
+        cursor.execute("INSERT INTO users(username, password, profile_picture) VALUES (?, ?, ?)", (username, hashed_password.decode('utf-8'), profile_picture))
         connection.commit()
 
         return render_template("register.html", message= "Registration successful", images=images)
