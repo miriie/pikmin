@@ -18,7 +18,7 @@ def initialize_database():
     CREATE TABLE IF NOT EXISTS users (
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        profile_picture TEXT
+        profile_picture TEXT NOT NULL
     );'''
 
 

@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
   <div id="top-division">
@@ -11,8 +12,9 @@
         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="corner-image">
     </a>
     <span>Minpik Game Review</span>
-    
-    <!-- Login/Logout Button -->
+    <div class="auth-button">
+        <a href="{{ url_for('search') }}" class="search-button">Search</a>
+    </div>
     <div class="auth-button">
         {% if not session.get('logged_in') %}
             <a href="{{ url_for('login') }}" class="login-button">Login</a>
@@ -21,6 +23,7 @@
         {% endif %}
     </div>
   </div>
+
 
   <h1 id="popular_games_section">Popular Games</h1>
   <div class="game-grid">

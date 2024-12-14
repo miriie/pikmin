@@ -6,6 +6,7 @@
 }
 body {
   margin: 10px;
+  text-align: center;
   padding-top: 100px; 
   background-image: url(images/background.png); 
   background-size: cover; 
@@ -18,24 +19,54 @@ body {
 #top-division {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  padding-left: 10px;
+  justify-content: space-between; /* Distribute space between elements */
+  padding: 0 20px;
   height: 80px;
   width: 100%;
   background-color: yellow;
   color: navy;
-  text-align: left;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
 }
+
 .corner-image {
-  margin-right: 10px;
   width: 150px;
   height: 50px;
   object-fit: cover;
+  margin-right: 10px;
 }
+
+#top-division span {
+  flex-grow: 1; /* Allow the title to take up available space */
+  text-align: left;
+}
+
+/* Auth Button */
+.auth-button {
+  margin-left: auto; /* Push buttons to the right */
+  display: flex; /* Align buttons horizontally */
+  gap: 15px; /* Space between login/logout and search button */
+  margin-right: 15px;
+}
+
+.auth-button a {
+  text-decoration: none;
+  color: navy;
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.auth-button a:hover {
+  background-color: navy;
+  color: white;
+}
+
 
 /* Content Wrapper */
 .content-wrapper {
@@ -250,38 +281,72 @@ textarea {
   background-color: #0056b3;
 }
 
-/* Auth Button */
-.auth-button {
-  margin-left: auto;
-  margin-right: 20px;
+.search-game-grid {
+    display: block;
+    padding: 20px; /* Optional: To add space around the grid */
 }
 
-.auth-button a {
-  text-decoration: none;
-  color: navy;
-  background-color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, color 0.3s;
+.all-games-heading {
+    text-align: left; /* Align heading to the left */
+    margin: 0; /* Remove any default margins */
+    font-size: 1.5em; /* Optional: Adjust the size */
+    font-weight: bold; /* Optional: To make it stand out */
+    margin-bottom: 10px; /* Optional: Space between heading and games list */
 }
 
-.auth-button a:hover {
-  background-color: navy;
-  color: white;
+.search-game-card {
+    /* Your other card styling */
+    margin-bottom: 15px; /* Space between game cards */
 }
+
+.search-game-link {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; /* Align elements to the start of the flex container */
+    text-decoration: none;
+    color: inherit;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 15px;
+}
+
+.search-game-image {
+    width: 150px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.search-game-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align content at the start */
+    gap: 5px; /* Small gap between title and rating */
+}
+
+.search-game-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: navy;
+    text-align: left;
+    margin: 0; /* Remove default margin */
+}
+
+.search-game-rating {
+    font-size: 1.1em;
+    color: #ffcc00;
+    font-weight: bold;
+    margin: 0; /* Remove default margin */
+    align-self: flex-start; /* Align the rating to the left, same as title */
+}
+/* trang css */
 
 /* fendy css */
 
 h1 {
   text-align: center;
-}
-
-body {
-  text-align: center;
-  margin: 10px;
-  padding-top: 100px; 
 }
 
 .wrapper {
@@ -292,17 +357,47 @@ body {
 
 .input-box input {
   padding: 10px 20px 10px 20px;
-  width: 40%;
-  height: 10%;
-  border-radius: 40px;
+  width: 35%;
+  height: 6%;
+  border-radius: 5px;
 }
 
-.button {
+.logreg-button {
   text-align: center;
-  background-color: green;
+  background-color: navy;
   color: white;
   width: 10%;
   padding: 10px;
-  border-radius: 40px;
+  border-radius: 5px;
   cursor: pointer;
 }
+
+.logreg-button:hover {
+  background-color: #0056b3;
+}
+
+.pikpic {
+  display: inline-block;
+  margin: 10px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.pikpic input[type="radio"] {
+  display: none;
+}
+
+.pikpic img {
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  background-color: white;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pikpic input[type="radio"]:checked + img {
+  border-color: yellow;
+}
+

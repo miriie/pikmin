@@ -1,11 +1,27 @@
 import random
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, make_response, send_from_directory
 from datetime import datetime
 import pytz
 import sqlite3
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+#
+# flame stuff
+#
+@app.route('/static/serviceWorker.js')
+def sw():
+    response=make_response(
+        send_from_directory('static', 'serviceWorker.js'))
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
+
+#
+# end flame stuff
+#
+
 
 #
 # trang stuff
@@ -22,30 +38,22 @@ def game_page(game_id):
 
     if request.method == 'POST':
         # Handle the form submission for adding a review
-        username = request.form['username']
+        username = session['username']
         rating = int(request.form['rating'])
         review_title = request.form['review_title']
         review_text = request.form['review']
+        profile_picture = session['profile_picture']
         
         # Get the current time in Sydney, Australia
         sydney_tz = pytz.timezone('Australia/Sydney')
         current_date = datetime.now(sydney_tz).strftime('%Y-%m-%d')
 
-        # Fetch user ID based on username
-        user_query = "SELECT id FROM users WHERE username = ?"
-        user_id_row = connection.execute(user_query, (username,)).fetchone()
-
-        if not user_id_row:
-            return "User not found. Review not submitted.", 400
-        
-        user_id = user_id_row['id']
-
         # Insert the new review into the database
         insert_review_query = '''
-        INSERT INTO reviews (game_id, rating, review, title, date, user_id)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
-        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, user_id))
+        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
     
     # Fetch game information based on the game ID
@@ -54,11 +62,10 @@ def game_page(game_id):
 
     # Fetch reviews for the game
     query_reviews = '''
-    SELECT users.username, users.profile_picture, reviews.title AS review_title, 
-           reviews.review, reviews.rating, reviews.date
+    SELECT username, profile_picture, title AS review_title, 
+           review, rating, date
     FROM reviews
-    JOIN users ON reviews.user_id = users.id
-    WHERE reviews.game_id = ?
+    WHERE game_id = ?
     '''
     reviews = connection.execute(query_reviews, (game_id,)).fetchall()
 
@@ -106,9 +113,21 @@ def homepage():
 
     connection.close()
 
+    sw()
+
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
 
-# i moved the login and logout defs to my section
+@app.route('/search')
+def search():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # Fetch games ordered alphabetically by title
+    cursor.execute("SELECT id, title, description, rating, image FROM games ORDER BY title ASC")
+    games = cursor.fetchall()
+
+    connection.close()
+    return render_template('search.html', games=games)
 
 #
 # end trang stuff
@@ -118,32 +137,24 @@ def homepage():
 # fendy stuff
 #
 
-def init_db():
-    with sqlite3.connect("users.db") as connection:
-        cursor = connection.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users(
-                username TEXT UNIQUE,
-                password TEXT
-            )
-        """)    
-        connection.commit()
-
 @app.route("/login", methods= ["GET", "POST"])
 def login():
+    connection = get_db_connection()
+    
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        with sqlite3.connect("users.db") as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
-            existing_user = cursor.fetchone()
-        
+        cursor = connection.cursor()
+        cursor.execute("SELECT username, password, profile_picture FROM users WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+    
+
         if existing_user:
-            db_password = existing_user[1]
-            if password == db_password:
+            db_password = existing_user[1].encode('utf-8')
+            if bcrypt.checkpw(password.encode('utf-8'),db_password):
                 session["username"] = username
+                session["profile_picture"] = existing_user[2]
                 session["logged_in"] = True
                 return redirect(url_for('homepage'))
             else:
@@ -159,42 +170,59 @@ def logout():
 
 @app.route("/register", methods= ["GET", "POST"])
 def register():
+    connection = get_db_connection()
+    
+    images = [
+        "clover.png", 
+        "redpik.png", 
+        "bluepik.png", 
+        "yellowpik.png",
+        "purplepik.png",
+        "whitepik.png",
+        "rockpik.png",
+        "icepik.png",
+        "wingpik.png",
+        "glowpik.png"
+    ]
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         re_password = request.form["re-password"]
+        profile_picture = "images/" + request.form["pikpic"]
 
-        with sqlite3.connect("users.db") as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
-            existing_user = cursor.fetchone()
+        cursor = connection.cursor()
+        cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
         
         # user taken
         if existing_user:
-            return render_template("register.html", message= "Error: Username already taken")
+            return render_template("register.html", message= "Error: Username already taken", images=images)
 
         # password min length
-        if len(password) <= 8:
-            return render_template("register.html", message= "Error: Password must be at least 8 characters long")
+        if len(password) < 8:
+            return render_template("register.html", message= "Error: Password must be at least 8 characters long", images=images)
 
         # passwords match
         if password != re_password:
-            return render_template("register.html", message= "Error: Passwords do not match")
+            return render_template("register.html", message= "Error: Passwords do not match", images=images)
         
-        # successful registration 
-        with sqlite3.connect("users.db") as connection:
-            cursor = connection.cursor()
-            cursor.execute("INSERT INTO users(username, password) VALUES (?, ?)", 
-                        (username, password))
-            connection.commit()
+        # Hash the password
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-        return render_template("register.html", message= "Registration successful")
-    return render_template("register.html")
+        # successful registration 
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO users(username, password, profile_picture) VALUES (?, ?, ?)", (username, hashed_password.decode('utf-8'), profile_picture))
+        connection.commit()
+
+        return render_template("register.html", message= "Registration successful", images=images)
+    return render_template("register.html", images=images)
+
+
 
 #
 # end fendy's stuff
 #
 
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
