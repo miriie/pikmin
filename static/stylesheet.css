@@ -27,7 +27,7 @@ a {
   padding: 0 20px;
   height: 80px;
   width: 100%;
-  background-color: yellow;
+  background-color: #fff067;
   color: navy;
   position: fixed;
   top: 0;
@@ -57,7 +57,7 @@ a {
 
 .auth-button a {
   text-decoration: none;
-  color: navy;
+  color: #027ebe;
   background-color: white;
   padding: 10px 15px;
   border-radius: 5px;
@@ -67,7 +67,7 @@ a {
 }
 
 .auth-button a:hover {
-  background-color: navy;
+  background-color: #027ebe;
   color: white;
 }
 
@@ -103,7 +103,7 @@ a {
 }
 
 .tag-button {
-  background-color: navy;
+  background-color: #55ac2d;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -113,7 +113,7 @@ a {
 }
 
 .tag-button:hover {
-  background-color: #0056b3;
+  background-color: #027ebe;
 }
 
 .rating {
@@ -146,7 +146,7 @@ a {
 
 /* Individual Review Container */
 .review {
-  background-color: #f9f9f9;
+  background-color: #eaf6ff;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -192,18 +192,6 @@ a {
   color: #333;
 }
 
-/* Top Navigation Bar */
-#top-division {
-  display: flex;
-  align-items: center;
-  height: 80px;
-  background-color: yellow;
-  color: navy;
-  padding: 0 20px;
-  position: fixed;
-  width: 100%;
-  z-index: 1000;
-}
 
 .corner-image {
   width: 150px;
@@ -212,7 +200,7 @@ a {
   margin-right: 10px;
 }
 
-/* Game Grid */
+/* Homepage */
 .game-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 columns */
@@ -234,6 +222,15 @@ a {
   transform: scale(1.05); /* Subtle zoom effect on hover */
 }
 
+.game-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.game-card a:hover {
+  text-decoration: none;
+}
+
 .game-image-homepage {
   width: 100%;
   height: auto;
@@ -244,7 +241,7 @@ a {
   padding: 10px;
   font-size: 1.2em;
   font-weight: bold;
-  color: navy;
+  color: black;
 }
 
 /* Review Form */
@@ -261,7 +258,7 @@ a {
 
 .review-form h2 {
   font-size: 1.5em;
-  color: navy;
+  color: #027ebe;
   margin-bottom: 15px;
 }
 
@@ -294,7 +291,7 @@ textarea {
   font-size: 1em;
   font-weight: bold;
   color: white;
-  background-color: navy;
+  background-color: #027ebe;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -354,7 +351,7 @@ textarea {
 .search-game-title {
     font-size: 1.2em;
     font-weight: bold;
-    color: navy;
+    color: black;
     text-align: left;
     margin: 0; /* Remove default margin */
 }
@@ -391,8 +388,8 @@ textarea {
 
 .tags-filter label {
   display: inline-block;
-  background-color: navy;
-  color: white;
+  background-color: white;
+  color: black;
   padding: 10px 20px;
   border: 3px transparent;
   border-radius: 5px;
@@ -406,27 +403,25 @@ textarea {
   display: none;
 }
 
-.tags-filter label:hover {
-  background-color: #0056b3;
-}
 
 .tags-filter input[type="checkbox"]:checked + label {
-  background-color: #0056b3;
+  background-color: #2dac79;
+  color: white;
 }
 
 .search-search-button {
   text-decoration: none;
-  color: navy;
-  background-color: white;
-  padding: 10px 15px;
+  color: white;
+  background-color: #027ebe;
+  padding: 15px 30px;
   border: transparent;
   border-radius: 5px;
   font-weight: bold;
+  font-size: 1.3em;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, color 0.3s;
   cursor: pointer;
 }
-
 
 /* trang css */
 
@@ -451,7 +446,7 @@ h1 {
 
 .logreg-button {
   text-align: center;
-  background-color: navy;
+  background-color:#027ebe;
   color: white;
   width: 10%;
   padding: 10px;

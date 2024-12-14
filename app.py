@@ -224,7 +224,7 @@ def login():
     
 
         if existing_user:
-            db_password = existing_user[1].encode('utf-8')
+            db_password = existing_user[1]
             if bcrypt.checkpw(password.encode('utf-8'),db_password):
                 session["username"] = username
                 session["profile_picture"] = existing_user[2]
