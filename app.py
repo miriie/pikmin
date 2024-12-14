@@ -39,11 +39,6 @@ def game_page(game_id):
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    # calculate avg rating from reviews
-    cursor.execute("SELECT AVG(rating) FROM reviews WHERE game_id = ?", (game_id,))
-    average_rating = cursor.fetchone()[0]
-    cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
-
     if request.method == 'POST':
         # Handle the form submission for adding a review
         username = session['username']
@@ -61,11 +56,13 @@ def game_page(game_id):
         INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
+        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
 
-        # update new avg rating
+        # recalculate new avg rating
+        cursor.execute("SELECT ROUND(AVG(rating), 1) FROM reviews WHERE game_id = ?", (game_id,))
+        average_rating = cursor.fetchone()[0]
         cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
 
-        connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
         return redirect(url_for('game_page', game_id=game_id))
     
@@ -159,7 +156,7 @@ def search():
             "Sports"
         ])
 
-    selected_tags = request.args.getlist('tags') or request.form.getlist('tags') # get selected tags from game page buttons or from search filter
+    selected_tags = [tag.strip() for tag in request.args.getlist('tags') or request.form.getlist('tags')] # get selected tags from game page buttons or from search filter
     searched_name = request.form.get('search-bar', '') if request.method == 'POST' else '' 
     
     if searched_name:

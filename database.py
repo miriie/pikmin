@@ -41,7 +41,7 @@ def initialise_database():
     title TEXT NOT NULL,
     description TEXT,
     tags TEXT,
-    rating FLOAT,
+    rating REAL,
     image TEXT NOT NULL
     );'''
 
@@ -170,8 +170,28 @@ def add_dummy_reviews():
     connection.commit()
     connection.close()
 
+def calculate_avg_rating():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT id FROM games")
+    games = cursor.fetchall()
+
+    for game in games:
+        game_id = game['id']
+
+        cursor.execute("SELECT ROUND(AVG(rating), 1) FROM reviews WHERE game_id = ?", (game_id,))
+        average_rating = cursor.fetchone()[0]
+        cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
+
+    connection.commit()
+    connection.close()
+
+    print("All game ratings updated successfully.")
+
 if __name__ == "__main__":
     add_game_entries()
     add_dummy_users()
     add_dummy_reviews()
+    calculate_avg_rating()
 
