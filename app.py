@@ -24,7 +24,7 @@ def game_page(game_id):
     cursor = connection.cursor()
 
     # calculate avg rating from reviews
-    cursor.execute("SELECT AVG(rating) FROM reviews WHERE game_id = ?", (game_id,))
+    cursor.execute("SELECT ROUND(AVG(rating), 1) FROM reviews WHERE game_id = ?", (game_id,))
     average_rating = cursor.fetchone()[0]
     cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
 

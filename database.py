@@ -41,7 +41,7 @@ def initialise_database():
     title TEXT NOT NULL,
     description TEXT,
     tags TEXT,
-    rating FLOAT,
+    rating REAL,
     image TEXT NOT NULL
     );'''
 
