@@ -1,5 +1,5 @@
 import random
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, make_response, send_from_directory
 from datetime import datetime
 import pytz
 import sqlite3
@@ -7,6 +7,21 @@ import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+#
+# flame stuff
+#
+@app.route('/static/serviceWorker.js')
+def sw():
+    response=make_response(
+        send_from_directory('static', 'serviceWorker.js'))
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
+
+#
+# end flame stuff
+#
+
 
 #
 # trang stuff
@@ -97,6 +112,8 @@ def homepage():
     explore_games = random.sample(all_games, min(len(all_games), 3))  # Pick 3 random games
 
     connection.close()
+
+    sw()
 
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
 
