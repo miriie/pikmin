@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+import bcrypt
 
 connection = sqlite3.connect('my-database.db')
 cursor = connection.cursor()
@@ -114,14 +115,15 @@ def add_dummy_users():
     for user in users_data:
         cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?", (user[0],))
         if cursor.fetchone()[0] == 0:
-            cursor.execute("INSERT INTO users (username, password, profile_picture) VALUES (?, ?, ?)", user)
-            print(f"User '{user[0]}' added to the database.")
+            # Hash the password before storing it
+            hashed_password = bcrypt.hashpw(user[1].encode('utf-8'), bcrypt.gensalt())
+            cursor.execute("INSERT INTO users (username, password, profile_picture) VALUES (?, ?, ?)",
+                           (user[0], hashed_password, user[2]))
+            print(f"User '{user[0]}' added to the database with a hashed password.")
         else:
             print(f"User '{user[0]}' already exists. Skipping.")
-
     connection.commit()
     connection.close()
-
 
 def add_dummy_reviews():
     connection = get_db_connection()

@@ -186,7 +186,7 @@ def search():
             return render_template("search.html", games=games, tags=tags, message= f'Showing results for "{searched_name}":')
         else:
             searched_name = request.form["search-bar"]
-            return render_template("search.html", games="", tags=tags, message= f'Error: No games found for "{searched_name}":')
+            return render_template("search.html", games="", tags=tags, message= f'No games found for "{searched_name}":')
 
     # filter games that fit selected tags
     elif selected_tags:
@@ -197,7 +197,7 @@ def search():
             games = existing_game
             return render_template("search.html", games=games, tags=tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
         else:
-            return render_template("search.html", games="", tags=tags, message= f'Error: No games found for tags: "{", ".join(selected_tags)}":')
+            return render_template("search.html", games="", tags=tags, message= f'No games found for tags: "{", ".join(selected_tags)}":')
     
     connection.close()
     return render_template('search.html', games=games, tags=tags, message= f'All Games:')
