@@ -1,7 +1,5 @@
 YOU WILL NEED TO INSTALL THESE PACKAGES IF YOU DO NOT ALREADY HAVE:
- - python
  - flask
- - sqlite3
  - pytz
  - bcrypt
 To install, simply open up your terminal and type 'pip install <INSERT PACKAGE NAME>'
