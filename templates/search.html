@@ -25,9 +25,29 @@
         </div>
     </div>
     
+    <!-- Search Bar & Filter-->
+    <div class="search-bar">
+        <form id="search-bar" method="POST" action="/search">
+            <h3>Search by Name</h3>
+            <input type="text" name="search-bar" placeholder="Search...">
+            <h3>OR</h3>
+            <h3 style="text-align: left;">Filter by Tags:</h3>
+            <div class="tags-filter">
+                {% for tag in tags %}
+                    <div class="tag-container">
+                        <input type="checkbox" name="tags" value="{{ tag }}" id="tag-{{ tag }}" {% if tag in selected_tags %} checked {% endif %}>
+                        <label for="tag-{{ tag }}">{{ tag }}</label>
+                    </div>
+                {% endfor %}
+            </div> 
+            <button type="submit" class="search-search-button">Search</button>                      
+        </form>
+        <br>
+    </div>
+
     <!-- Display list of games -->
     <div class="search-game-grid">
-        <h3 class="all-games-heading">All Games:</h3>
+        <h3 class="all-games-heading">{{ message }}</h3>
         <div class="game-cards-container">
             {% for game in games %}
                 <div class="search-game-card">

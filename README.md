@@ -3,3 +3,4 @@ YOU WILL NEED TO INSTALL IF YOU DO NOT ALREADY HAVE:
  - flask
  - sqlite
  - pytz
+ - bycrypt

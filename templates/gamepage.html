@@ -36,6 +36,15 @@
             <h1>{{ game['title'] }}</h1>
             <p>{{ game['description'] }}</p>
             <p><strong>Rating:</strong> <span class="rating">{{ game['rating'] }}</span></p>
+            <p><strong>Tags:</strong>
+                <form method="POST">
+                    <div class="game-tags">
+                        {% for tag in game['tags'] %}
+                            <a href="{{ url_for('search') }}?tags={{ tag }}" class="tag-button">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                </form>
+            </p>
         </div>
 
         <!-- Right Section: Game Image -->

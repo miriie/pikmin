@@ -4,6 +4,8 @@ from datetime import datetime
 import pytz
 import sqlite3
 import bcrypt
+import string
+import unicodedata
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -35,6 +37,12 @@ def get_db_connection():
 @app.route('/game/<int:game_id>', methods=['GET', 'POST'])
 def game_page(game_id):
     connection = get_db_connection()
+    cursor = connection.cursor()
+
+    # calculate avg rating from reviews
+    cursor.execute("SELECT AVG(rating) FROM reviews WHERE game_id = ?", (game_id,))
+    average_rating = cursor.fetchone()[0]
+    cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
 
     if request.method == 'POST':
         # Handle the form submission for adding a review
@@ -53,11 +61,16 @@ def game_page(game_id):
         INSERT INTO reviews (game_id, rating, review, title, date, profile_picture, username)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
+
+        # update new avg rating
+        cursor.execute("UPDATE games SET rating = ? WHERE id = ?", (average_rating, game_id))
+
         connection.execute(insert_review_query, (game_id, rating, review_text, review_title, current_date, profile_picture, username))
         connection.commit()
+        return redirect(url_for('game_page', game_id=game_id))
     
     # Fetch game information based on the game ID
-    query_game = "SELECT title, description, rating, image FROM games WHERE id = ?"
+    query_game = "SELECT title, description, tags, rating, image FROM games WHERE id = ?"
     game = connection.execute(query_game, (game_id,)).fetchone()
 
     # Fetch reviews for the game
@@ -72,10 +85,15 @@ def game_page(game_id):
     connection.close()
 
     if game:
+        # sorting tags
+        tags = sorted(game['tags'].split(','))
+        
+        # display game data
         game_data = {
             "title": game['title'],
             "description": game['description'],
-            "rating": game['rating'],
+            "tags": tags,
+            "rating": game['rating'] if reviews else "N/A",
             "image": game['image'],  
             "reviews": [
                 {
@@ -88,7 +106,7 @@ def game_page(game_id):
                 } for r in reviews
             ]
         }
-        return render_template('gamepage.html', game=game_data)
+        return render_template('gamepage.html', game=game_data, tags=tags)
     else:
         return "Page not found", 404
 
@@ -117,7 +135,7 @@ def homepage():
 
     return render_template("homepage.html", popular_games=popular_games, explore_games=explore_games)
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -125,9 +143,67 @@ def search():
     # Fetch games ordered alphabetically by title
     cursor.execute("SELECT id, title, description, rating, image FROM games ORDER BY title ASC")
     games = cursor.fetchall()
+    tags = sorted([
+            "Multi-player", 
+            "Single-player", 
+            "Strategy", 
+            "Platformer", 
+            "Adventure", 
+            "Open-world", 
+            "Combat", 
+            "Competitive",
+            "Mini-games",
+            "Casual",
+            "Life-simulator",
+            "Cooking",
+            "Sports"
+        ])
 
+    selected_tags = request.args.getlist('tags') or request.form.getlist('tags') # get selected tags from game page buttons or from search filter
+    searched_name = request.form.get('search-bar', '') if request.method == 'POST' else '' 
+    
+    if searched_name:
+        banned_punctuation = string.punctuation + ":'" # get rid of inconsistencies when user searches up a term
+        searched_name = unicodedata.normalize('NFD', searched_name).encode('ascii', 'ignore').decode('utf-8') # bruh i had to add this specific case just for Pokémon Violet :(
+        searched_name = searched_name.replace(" ", "").translate(str.maketrans("", "", banned_punctuation)).lower()
+        searched_name = f"%{searched_name}%" # if the searched name is partially typed up, and is in one of the databases' game titles, the search works
+    
+        # haha what a hot mess (again homogenising game titles and getting rid of grammar so it's easier to match)
+        cursor.execute("""SELECT id, title, description, rating, image 
+        FROM games WHERE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE 
+            (title, 
+            ' ', ''),
+            ',', ''), 
+            '.', ''),
+            ':', ''),
+            "'", ''),
+            'é', 'e')
+            ) LIKE ?""",
+            (searched_name,))
+        existing_game = cursor.fetchall()
+        
+        # check if game name searched exists in the database
+        if existing_game:
+            games = existing_game
+            searched_name = request.form["search-bar"]
+            return render_template("search.html", games=games, tags=tags, message= f'Showing results for "{searched_name}":')
+        else:
+            searched_name = request.form["search-bar"]
+            return render_template("search.html", games="", tags=tags, message= f'Error: No games found for "{searched_name}":')
+
+    # filter games that fit selected tags
+    elif selected_tags:
+        tags_conditions = " AND ".join([f"tags LIKE '%{tag}%'" for tag in selected_tags])
+        cursor.execute(f"""SELECT id, title, description, rating, image FROM games WHERE {tags_conditions}""")
+        existing_game = cursor.fetchall()
+        if existing_game:
+            games = existing_game
+            return render_template("search.html", games=games, tags=tags, message= f'Showing results for tags: "{", ".join(selected_tags)}":')
+        else:
+            return render_template("search.html", games="", tags=tags, message= f'Error: No games found for tags: "{", ".join(selected_tags)}":')
+    
     connection.close()
-    return render_template('search.html', games=games)
+    return render_template('search.html', games=games, tags=tags, message= f'All Games:')
 
 #
 # end trang stuff
@@ -211,14 +287,13 @@ def register():
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
         # successful registration 
-        cursor = connection.cursor()
         cursor.execute("INSERT INTO users(username, password, profile_picture) VALUES (?, ?, ?)", (username, hashed_password.decode('utf-8'), profile_picture))
         connection.commit()
-
-        return render_template("register.html", message= "Registration successful", images=images)
+        session["username"] = username
+        session["profile_picture"] = profile_picture
+        session["logged_in"] = True
+        return redirect(url_for('homepage'))
     return render_template("register.html", images=images)
-
-
 
 #
 # end fendy's stuff
